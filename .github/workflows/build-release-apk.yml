@@ -1,0 +1,23 @@
+name: Build Android Release APK
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build-release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.24.5'
+          channel: stable
+          cache: true
+      - run: flutter create . --platforms=android --project-name turkmen_ses
+      - run: flutter pub get
+      - run: dart run build_runner build --delete-conflicting-outputs
+      - run: flutter build apk --release --dart-define=API_BASE_URL=${{ vars.API_BASE_URL }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: turkmen-ses-release-apk
+          path: build/app/outputs/flutter-apk/app-release.apk

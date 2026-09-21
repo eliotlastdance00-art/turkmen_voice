@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: turkmen-ses-api
+    runtime: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /api/v1/health
+    envVars:
+      - key: PYTHONUNBUFFERED
+        value: "1"
