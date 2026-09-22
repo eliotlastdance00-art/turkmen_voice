@@ -21,7 +21,6 @@ class SyncQueue {
     }
 
     var uploaded = 0;
-
     final recordings = await database.pendingRecordings();
 
     for (final item in recordings) {
@@ -71,7 +70,4 @@ final syncQueueProvider = Provider<SyncQueue>(
     ref.watch(databaseProvider),
     ref.watch(apiClientProvider),
   ),
-);}
-
-final apiClientProvider = Provider<ApiClient>((ref) => ApiClient());
-final syncQueueProvider = Provider<SyncQueue>((ref) => SyncQueue(ref.watch(databaseProvider), ref.watch(apiClientProvider)));
+);
