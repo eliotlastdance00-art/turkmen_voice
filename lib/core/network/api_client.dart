@@ -3,10 +3,7 @@ import 'package:dio/dio.dart';
 class ApiClient {
   final Dio _dio;
 
-  ApiClient({
-    Dio? dio,
-    String? baseUrl,
-  }) : _dio = dio ?? Dio() {
+  ApiClient({Dio? dio, String? baseUrl}) : _dio = dio ?? Dio() {
     _dio.options = _dio.options.copyWith(
       baseUrl: baseUrl ??
           const String.fromEnvironment(
@@ -31,12 +28,10 @@ class ApiClient {
       'audio_file': await MultipartFile.fromFile(
         filePath,
         filename: filePath.split('/').last,
+        contentType: DioMediaType('audio', 'wav'),
       ),
     });
 
-    await _dio.post(
-      '/recordings',
-      data: form,
-    );
+    await _dio.post('/recordings', data: form);
   }
 }
