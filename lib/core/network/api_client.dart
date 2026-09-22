@@ -1,19 +1,42 @@
-import 'package:flutter/material.dart';
+import 'package:dio/dio.dart';
 
-class AppTheme {
-  static final light = ThemeData(
-    useMaterial3: true,
-    colorScheme: ColorScheme.fromSeed(
-      seedColor: const Color(0xFF0B6E69),
-      brightness: Brightness.light,
-    ),
-    scaffoldBackgroundColor: const Color(0xFFF8FAF9),
-    inputDecorationTheme: const InputDecorationTheme(
-      border: OutlineInputBorder(),
-    ),
-    cardTheme: const CardTheme(
-      margin: EdgeInsets.zero,
-      elevation: 0,
-    ),
-  );
+class ApiClient {
+  final Dio _dio;
+
+  ApiClient({
+    Dio? dio,
+    String? baseUrl,
+  }) : _dio = dio ?? Dio() {
+    _dio.options = _dio.options.copyWith(
+      baseUrl: baseUrl ??
+          const String.fromEnvironment(
+            'API_BASE_URL',
+            defaultValue: 'http://10.0.2.2:8000/api/v1',
+          ),
+      connectTimeout: const Duration(seconds: 15),
+      receiveTimeout: const Duration(seconds: 30),
+      sendTimeout: const Duration(seconds: 60),
+      headers: {
+        'Accept': 'application/json',
+      },
+    );
+  }
+
+  Future<void> uploadRecording({
+    required String filePath,
+    required Map<String, dynamic> metadata,
+  }) async {
+    final form = FormData.fromMap({
+      ...metadata,
+      'audio_file': await MultipartFile.fromFile(
+        filePath,
+        filename: filePath.split('/').last,
+      ),
+    });
+
+    await _dio.post(
+      '/recordings',
+      data: form,
+    );
+  }
 }
