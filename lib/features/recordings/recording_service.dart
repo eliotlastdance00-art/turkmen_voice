@@ -18,7 +18,7 @@ class RecordingService {
     await directory.create(recursive: true);
     final id = _uuid.v4();
     final path = p.join(directory.path, '$id.wav');
-    await _recorder.start(const RecordConfig(encoder: AudioEncoder.wav, sampleRate: 16000, numChannels: 1), path: path);
+    await _recorder.start(const RecordConfig(encoder: AudioEncoder.pcm16bits, sampleRate: 16000, numChannels: 1), path: path);
     return id;
   }
 
