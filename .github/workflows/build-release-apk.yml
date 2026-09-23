@@ -14,26 +14,15 @@ jobs:
           channel: stable
           cache: true
       - run: flutter create . --platforms=android --project-name turkmen_ses
-
-      - name: Fix plugin Gradle compatibility
-        run: |
-          cat >> android/build.gradle << 'EOF'
-
-          subprojects {
-              afterEvaluate { project ->
-                  if (project.hasProperty('android')) {
-                      project.android {
-                          if (namespace == null) {
-                              namespace project.group ?: project.name
-                          }
-                          compileSdkVersion 34
-                      }
-                  }
-              }
-          }
-          EOF
-
       - run: flutter pub get
+
+      - name: Patch legacy plugin build files
+        run: |
+          find "$PUB_CACHE" -path '*/record_android*/android/build.gradle' -exec sed -i \
+            -e 's/flutter\.compileSdkVersion/34/g' \
+            -e 's/flutter\.minSdkVersion/21/g' \
+            -e 's/flutter\.targetSdkVersion/34/g' {} +
+
       - run: dart run build_runner build --delete-conflicting-outputs
       - run: flutter build apk --release --dart-define=API_BASE_URL=${{ vars.API_BASE_URL }}
       - uses: actions/upload-artifact@v4
