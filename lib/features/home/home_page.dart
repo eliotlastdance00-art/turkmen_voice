@@ -3,11 +3,11 @@ import 'dart:async';
 import 'package:drift/drift.dart' as drift;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:just_audio/just_audio.dart';
 import 'package:go_router/go_router.dart';
+import 'package:just_audio/just_audio.dart';
 
-import '../../core/storage/app_database.dart';
-import '../recordings/recording_service.dart';
+import 'package:turkmen_ses/core/storage/app_database.dart';
+import 'package:turkmen_ses/features/recordings/recording_service.dart';
 
 class HomePage extends ConsumerWidget {
   const HomePage({super.key});
@@ -123,18 +123,24 @@ class _RecorderSheetState extends ConsumerState<_RecorderSheet> {
       _recordingId = await _recordingService.start();
       _startedAt = DateTime.now();
       _timer = Timer.periodic(const Duration(milliseconds: 250), (_) {
-        if (_startedAt != null && mounted) setState(() => _elapsed = DateTime.now().difference(_startedAt!));
+        if (_startedAt != null && mounted) {
+          setState(() => _elapsed = DateTime.now().difference(_startedAt!));
+        }
       });
       setState(() => _recording = true);
     } catch (error) {
-      if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Mikrofon elýeterli däl: $error')));
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Mikrofon elýeterli däl: $error')));
+      }
     }
   }
 
   Future<void> _stopRecording() async {
     _timer?.cancel();
     final path = await _recordingService.stop();
-    if (path == null || _recordingId == null) return;
+    if (path == null || _recordingId == null) {
+      return;
+    }
     setState(() {
       _recording = false;
       _audioPath = path;
@@ -142,7 +148,9 @@ class _RecorderSheetState extends ConsumerState<_RecorderSheet> {
   }
 
   Future<void> _playPreview() async {
-    if (_audioPath == null) return;
+    if (_audioPath == null) {
+      return;
+    }
     if (_playing) {
       await _player.stop();
       setState(() => _playing = false);
@@ -151,11 +159,15 @@ class _RecorderSheetState extends ConsumerState<_RecorderSheet> {
     await _player.setFilePath(_audioPath!);
     setState(() => _playing = true);
     await _player.play();
-    if (mounted) setState(() => _playing = false);
+    if (mounted) {
+      setState(() => _playing = false);
+    }
   }
 
   Future<void> _saveRecording() async {
-    if (_audioPath == null || _recordingId == null) return;
+    if (_audioPath == null || _recordingId == null) {
+      return;
+    }
     setState(() => _saving = true);
     final database = ref.read(databaseProvider);
     await database.saveRecording(RecordingsCompanion.insert(
@@ -168,7 +180,9 @@ class _RecorderSheetState extends ConsumerState<_RecorderSheet> {
       consentType: 'dataset',
       createdAt: DateTime.now(),
     ));
-    if (!mounted) return;
+    if (!mounted) {
+      return;
+    }
     setState(() => _saving = false);
     Navigator.of(context).pop();
     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Ýazgy telefonda saklandy')));

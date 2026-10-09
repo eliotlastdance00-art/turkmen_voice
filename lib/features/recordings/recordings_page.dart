@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../core/storage/app_database.dart';
+
+import 'package:turkmen_ses/core/storage/app_database.dart';
 
 class RecordingsPage extends ConsumerWidget {
   const RecordingsPage({super.key});

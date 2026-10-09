@@ -114,6 +114,8 @@ turkmen-ses-debug-apk
 
 Bu APK test üçin ýeterlikdir. Play Store üçin release signing gerek.
 
+Minimum: Flutter 3.44+ we Dart 3.12+ (`record: ^7.0.0` üçün).
+
 ## 6. Lokal test
 
 Terminal 1:
@@ -132,6 +134,14 @@ flutter pub get
 dart run build_runner build --delete-conflicting-outputs
 flutter run --dart-define=API_BASE_URL=http://10.0.2.2:8000/api/v1
 ```
+
+APK build ücin:
+
+```bash
+flutter build apk --debug
+```
+
+Çykýan APK: `build/app/outputs/flutter-apk/app-debug.apk`.
 
 ## 7. Möhüm çäklendirme
 

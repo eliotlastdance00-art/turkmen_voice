@@ -7,30 +7,36 @@ jobs:
   build-release:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: subosito/flutter-action@v2
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
         with:
           channel: stable
           cache: true
-      - run: flutter create . --platforms=android --project-name turkmen_ses
 
-      - name: Add Android microphone permission
-        run: |
-          python3 -c '
-          import xml.etree.ElementTree as ET
-          ET.register_namespace("android", "http://schemas.android.com/apk/res/android")
-          tree = ET.parse("android/app/src/main/AndroidManifest.xml")
-          root = tree.getroot()
-          perm = ET.Element("uses-permission")
-          perm.set("{http://schemas.android.com/apk/res/android}name", "android.permission.RECORD_AUDIO")
-          root.insert(0, perm)
-          tree.write("android/app/src/main/AndroidManifest.xml", encoding="utf-8", xml_declaration=True)
-          '
+      # android/ is committed to the repo (with RECORD_AUDIO + INTERNET
+      # permissions in app/src/main/AndroidManifest.xml), so no
+      # `flutter create` / manifest-patching step is needed.
+      - name: Install dependencies
+        run: flutter pub get
 
-      - run: flutter pub get
-      - run: dart run build_runner build --delete-conflicting-outputs
-      - run: flutter build apk --release --dart-define=API_BASE_URL=${{ vars.API_BASE_URL }}
-      - uses: actions/upload-artifact@v4
+      - name: Generate Drift code
+        run: dart run build_runner build --delete-conflicting-outputs
+
+      - name: Analyze
+        run: flutter analyze
+
+      # The release APK is signed with the debug key (see signingConfig in
+      # android/app/build.gradle.kts) — fine for testing. Publishing to the
+      # Play Store requires a custom release keystore.
+      - name: Build release APK
+        run: flutter build apk --release --dart-define=API_BASE_URL=${{ vars.API_BASE_URL }}
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
         with:
           name: turkmen-ses-release-apk
           path: build/app/outputs/flutter-apk/app-release.apk
+          if-no-files-found: error

@@ -8,9 +8,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: .
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -21,22 +18,9 @@ jobs:
           channel: stable
           cache: true
 
-      - name: Generate Android platform files
-        run: flutter create . --platforms=android --project-name turkmen_ses
-
-      - name: Add Android microphone permission
-        run: |
-          python3 -c '
-          import xml.etree.ElementTree as ET
-          ET.register_namespace("android", "http://schemas.android.com/apk/res/android")
-          tree = ET.parse("android/app/src/main/AndroidManifest.xml")
-          root = tree.getroot()
-          perm = ET.Element("uses-permission")
-          perm.set("{http://schemas.android.com/apk/res/android}name", "android.permission.RECORD_AUDIO")
-          root.insert(0, perm)
-          tree.write("android/app/src/main/AndroidManifest.xml", encoding="utf-8", xml_declaration=True)
-          '
-
+      # android/ is committed to the repo (with RECORD_AUDIO + INTERNET
+      # permissions in app/src/main/AndroidManifest.xml), so no
+      # `flutter create` / manifest-patching step is needed.
       - name: Install dependencies
         run: flutter pub get
 
