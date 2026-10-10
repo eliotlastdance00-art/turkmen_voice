@@ -21,16 +21,31 @@ lib/
 
 ## Gurnamak
 
-Flutter SDK gerek. Soňra:
+**Gerekli:** Flutter SDK 3.44+ (maslahat: 3.47.7 stable), JDK 17 we Android SDK.
+Minimum: Flutter 3.44+ we Dart 3.12+ (`record: ^7.0.0` ücin). Köne Flutter bilen `flutter pub get` şowsuz.
 
 ```bash
 cd turkmen_ses
 flutter pub get
-flutter pub run build_runner build --delete-conflicting-outputs
+dart run build_runner build --delete-conflicting-outputs
 flutter analyze
 flutter test
 flutter run --dart-define=API_BASE_URL=http://10.0.2.2:8000/api/v1
 ```
+
+## APK build (lokal)
+
+```bash
+# Debug APK
+flutter build apk --debug --dart-define=API_BASE_URL=http://10.0.2.2:8000/api/v1
+
+# Release APK
+flutter build apk --release --dart-define=API_BASE_URL=http://10.0.2.2:8000/api/v1
+```
+
+Çykýan APK ýoly: `build/app/outputs/flutter-apk/app-debug.apk` (weya `app-release.apk`).
+
+`android/` bukjasy repo-da bar — şonuñ ücin `flutter create` gerek däl.
 
 API adresleri:
 
@@ -76,11 +91,14 @@ Häzirki implementation:
 8. FastAPI backend bilen birleşme.
 9. Settings ekranlarynda manual sync düwmesi.
 
-## Mikrofon rugsady
+## Android rugsatlar
 
-`record` plugin üçin platform project-lary döredilende:
+`android/app/src/main/AndroidManifest.xml`-de şu rugsatlar bar:
 
-Android `android/app/src/main/AndroidManifest.xml` içine:
+- `android.permission.INTERNET` — ses ýazgylary serwere ibermek üçün (dio).
+- `android.permission.RECORD_AUDIO` — mikrofon ýazgysy üçün (`record`).
+
+Bu rugsatlar endi repo-da bar — täzeden goşmak gerek däl.
 
 ```xml
 <uses-permission android:name="android.permission.RECORD_AUDIO" />

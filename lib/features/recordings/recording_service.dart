@@ -12,7 +12,9 @@ class RecordingService {
   Future<bool> requestPermission() => _recorder.hasPermission();
 
   Future<String> start() async {
-    if (!await requestPermission()) throw StateError('Mikrofon rugsady berilmedi');
+    if (!await requestPermission()) {
+      throw StateError('Mikrofon rugsady berilmedi');
+    }
     final root = await getApplicationDocumentsDirectory();
     final directory = Directory(p.join(root.path, 'recordings'));
     await directory.create(recursive: true);

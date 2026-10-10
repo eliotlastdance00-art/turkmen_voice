@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../core/storage/app_database.dart';
-import '../recordings/sync_queue.dart';
+import 'package:turkmen_ses/core/storage/app_database.dart';
+import 'package:turkmen_ses/features/recordings/sync_queue.dart';
 
 class SettingsPage extends ConsumerWidget {
   const SettingsPage({super.key});
@@ -51,7 +51,9 @@ class SettingsPage extends ConsumerWidget {
     final messenger = ScaffoldMessenger.of(context);
     messenger.showSnackBar(const SnackBar(content: Text('Ýazgylar serwere iberilýär...')));
     final count = await ref.read(syncQueueProvider).flush();
-    if (!context.mounted) return;
+    if (!context.mounted) {
+      return;
+    }
     messenger.hideCurrentSnackBar();
     messenger.showSnackBar(SnackBar(content: Text('$count ýazgy üstünlikli iberildi')));
   }

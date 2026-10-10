@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../core/router/app_router.dart';
-import '../core/theme/app_theme.dart';
+import 'package:turkmen_ses/core/router/app_router.dart';
+import 'package:turkmen_ses/core/theme/app_theme.dart';
 
 class TurkmenSesApp extends ConsumerWidget {
   const TurkmenSesApp({super.key});
@@ -33,9 +33,15 @@ class Shell extends StatelessWidget {
       bottomNavigationBar: NavigationBar(
         selectedIndex: index,
         onDestinationSelected: (value) {
-          if (value == 0) context.go('/');
-          if (value == 1) context.go('/recordings');
-          if (value == 2) context.go('/settings');
+          if (value == 0) {
+            context.go('/');
+          }
+          if (value == 1) {
+            context.go('/recordings');
+          }
+          if (value == 2) {
+            context.go('/settings');
+          }
         },
         destinations: const [
           NavigationDestination(icon: Icon(Icons.mic_none), selectedIcon: Icon(Icons.mic), label: 'Ýazgy'),
