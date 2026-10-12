@@ -1,0 +1,85 @@
+name: Backend CI
+
+permissions:
+  contents: read
+  pull-requests: write
+
+on:
+  push:
+    branches: [main, master]
+    paths:
+      - 'backend/**'
+      - '.github/workflows/backend-ci.yml'
+  pull_request:
+    paths:
+      - 'backend/**'
+  workflow_dispatch:
+
+jobs:
+  test:
+    name: Contract tests (frontend ↔ backend)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: backend/requirements-dev.txt
+
+      - name: Install dependencies
+        run: pip install -r requirements-dev.txt
+
+      - name: Run API contract tests
+        run: |
+          set +e
+          python -m pytest tests -q --tb=short > /tmp/pytest.log 2>&1
+          status=$?
+          tail -60 /tmp/pytest.log
+          if [ $status -ne 0 ]; then
+            grep -E "(FAILED|ERROR|Error:|assert)" /tmp/pytest.log | tail -10 | while IFS= read -r line; do
+              echo "::error title=pytest::${line}"
+            done
+          fi
+          exit $status
+
+      - name: Smoke test a live server
+        run: |
+          uvicorn app.main:app --host 127.0.0.1 --port 8010 &
+          for i in $(seq 1 30); do
+            curl -sf http://127.0.0.1:8010/api/v1/health >/dev/null && break || sleep 1
+          done
+          python scripts/smoke_test.py --base-url http://127.0.0.1:8010/api/v1 | tee /tmp/smoke.log
+
+      - name: Report logs to PR
+        if: failure() && github.event_name == 'pull_request'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          {
+            echo "### Backend CI log (\`${{ github.sha }}\`)"
+            echo
+            for f in /tmp/pytest.log /tmp/smoke.log; do
+              if [ -f "$f" ]; then
+                echo "<details><summary>$f</summary>"
+                echo
+                echo '```'
+                tail -c 7000 "$f"
+                echo '```'
+                echo "</details>"
+              fi
+            done
+          } > /tmp/pr-comment.md
+          gh pr comment "${{ github.event.pull_request.number }}" --repo "${{ github.repository }}" --body-file /tmp/pr-comment.md || true
+
+  docker:
+    name: Build image
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build Dockerfile
+        run: docker build -t turkmen-ses-api:ci ./backend

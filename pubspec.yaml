@@ -1,7 +1,7 @@
 name: turkmen_ses
 description: Offline-first Turkmen speech data collection app.
 publish_to: 'none'
-version: 0.1.0+1
+version: 0.2.0+2
 
 environment:
   # record: ^7.0.0  →  Flutter >=3.44.0 / Dart >=3.12.0 talap edýär

@@ -1,45 +1,47 @@
 # Türkmen Ses Backend Architecture
 
-## Layerler
+## Gatlaklar
 
 ```text
 routers       HTTP transport, validation, response models
-schemas       Pydantic API contracts
-services      Use-cases/business rules
-repositories  Persistence implementation
- domain       Entities and repository interfaces
- db           SQLite connection and migrations/bootstrap
- core         Configuration and cross-cutting concerns
+schemas       Pydantic API contracts (mobile app bilen şertnama)
+services      Use-case/business rules (audio, rating, user, dataset, stats)
+repositories  Persistence (SQLite)
+domain        Entities + repository protocols (framework-syz)
+db            SQLite schema, migrasiýa, seed
+core          Config (env-driven) we security
 ```
 
-## Dependency direction
+## Baglylyk ugry
 
 ```text
-router -> service -> domain repository interface
-                    ^
-                    |
-             sqlite repository
+router -> service -> domain repository protocol
+                     ^
+                     |
+              sqlite repository
 ```
 
-Domain layer FastAPI ýa-da SQLite-den garaşsyz saklanýar. Soňra SQLite ýerine PostgreSQL, audio disk ýerine S3 goýlanda service we router üýtgemeli däl.
+## Esasy kararlar
 
-## Täze feature goşmak tertibi
+1. **Ses konweýeri**: her ýükleme 16 kHz mono PCM16 WAV görnüşine getirilýär.
+   Köne APK header-siz pcm16 ýazýardy — `audio_service.normalize_audio()` muny
+   hem kabul edip, dogry RIFF header goşýar. Durasiýa, sha256 we ses derejesi
+   serwerde ölçelýär (müşderiniň berýän `duration_ms`-ine ynanmaýarys).
+2. **Idempotent ýükleme**: `recording_id` boýunça gaýtalanma saklanmaýar —
+   offline nobat tora gaýdanda goşa ýazgy döretmeýär.
+3. **Jemgyýetçilik reýtingi**: 3+ baha we orta baha ≥ 4.0 bolsa ýazgy awtomatik
+   tassyklanýar; 3 şikaýat bolsa ret edilýär. Bu adam güýjüni azaldýar.
+4. **Diňe `approved` eksport edilýär** — model tassiklanmadyk ýazgyny görmez.
+5. **Migrasiýa**: SQLite `PRAGMA user_version` + sütün barlagy (köne bazalar
+   üçin `ALTER TABLE`), şeýle hem `seed_library()` idempotent.
 
-1. `domain/entities` içinde entity ýa-da value object.
-2. `domain/repositories` içinde Protocol interface.
-3. `schemas` içinde request/response contract.
-4. `repositories` içinde persistence implementation.
-5. `services` içinde use-case.
-6. `routers` içinde HTTP endpoint.
-7. `api_dependencies.py` içinde dependency wiring.
+## Täze endpoint goşmak tertibi
 
-## Production-a geçiş
-
-- SQLite -> PostgreSQL + SQLAlchemy/SQLModel
-- Local audio -> S3-compatible object storage
-- `allow_origins=['*']` -> belli domainler
-- Admin auth, JWT, roles, rate limiting
-- Alembic migrations
-- Background job queue: Celery/RQ/Arq
-- WAV validation: header, duration, sample rate, mono check
-- Structured logging, metrics, health/readiness endpoints
+1. `domain/entities` — entity (gerek bolsa).
+2. `domain/repositories` — Protocol.
+3. `schemas` — request/response.
+4. `repositories` — SQLite implementasiýa.
+5. `services` — use-case.
+6. `routers` — HTTP endpoint (`Depends` bilen).
+7. `api_dependencies.py` — wiring.
+8. `tests/test_api_contract.py` — app-niň ulanjak ýoluny test et.
