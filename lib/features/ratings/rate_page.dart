@@ -236,7 +236,7 @@ class _RatePageState extends ConsumerState<RatePage> {
                           const SizedBox(height: 18),
                           Center(
                             child: FilledButton.tonalIcon(
-                              onPressed: () => _play('${item['audio_url']}'),
+                              onPressed: () => _play(AppConfig.resolveUrl('${item['audio_url']}')),
                               icon: Icon(_playing ? Icons.stop_rounded : Icons.play_arrow_rounded),
                               label: Text(_playing ? 'Duruz' : 'Diňle'),
                             ),

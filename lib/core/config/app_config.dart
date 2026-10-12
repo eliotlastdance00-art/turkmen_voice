@@ -13,6 +13,26 @@ class AppConfig {
   static const String appName = 'Türkmen Ses';
   static const String appVersion = '0.2.0';
 
+  /// Serwer `audio_url` üçin otnositel ýol gaýtaryp bilýär
+  /// (`/api/v1/recordings/<id>/audio`). Şeýle halda ony API-niň öý eýesine
+  /// birleşdirýäris — ýoksa pleýer "Invalid URL" berýär.
+  static String resolveUrl(String? raw) {
+    final value = (raw ?? '').trim();
+    if (value.isEmpty) {
+      return '';
+    }
+    final parsed = Uri.tryParse(value);
+    if (parsed != null && parsed.hasScheme) {
+      return value;
+    }
+    final base = Uri.tryParse(apiBaseUrl);
+    if (base == null) {
+      return value;
+    }
+    // base: https://host:port/api/v1 → öý eýesi: https://host:port
+    return base.replace(path: '', query: '', fragment: '').resolve(value).toString();
+  }
+
   /// Whisper data contract — must stay in sync with the backend settings.
   static const int targetSampleRate = 16000;
   static const int maxRecordingMs = 15000;

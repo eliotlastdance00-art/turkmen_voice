@@ -29,16 +29,6 @@ class ApiException implements Exception {
           statusCode: status,
           isNetwork: true,
         );
-      case DioExceptionType.connectionError:
-      case DioExceptionType.unknown:
-      default:
-        // şu ýerde `default` hem bar: dio-nyň täze görnüşlerinde hem döwülmez
-        return ApiException(
-          'Serwere baglanyp bolmady. Internet ýok bolsa, ýazgylar telefonda saklanar.',
-          statusCode: status,
-          isNetwork: true,
-          offline: true,
-        );
       case DioExceptionType.cancel:
         return const ApiException('Sorag ýatyryldy.');
       case DioExceptionType.badCertificate:
@@ -47,6 +37,19 @@ class ApiException implements Exception {
         return ApiException(
           detail ?? _statusMessage(status),
           statusCode: status,
+        );
+      case DioExceptionType.transformTimeout:
+        return ApiException(
+          'Jogap işlenip bilinmedi. Täzeden synanyşyň.',
+          statusCode: status,
+        );
+      case DioExceptionType.connectionError:
+      case DioExceptionType.unknown:
+        return ApiException(
+          'Serwere baglanyp bolmady. Internet ýok bolsa, ýazgylar telefonda saklanar.',
+          statusCode: status,
+          isNetwork: true,
+          offline: true,
         );
     }
   }
