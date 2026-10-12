@@ -58,6 +58,27 @@ jobs:
           for i in $(seq 1 30); do
             curl -sf http://127.0.0.1:8010/api/v1/health >/dev/null && break || sleep 1
           done
+
+      - name: Report logs to PR
+        if: failure() && github.event_name == 'pull_request'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          {
+            echo "### CI log — ${{ github.workflow }} (\`${{ github.sha }}\`)"
+            echo
+            for f in /tmp/pub.log /tmp/br.log /tmp/analyze.log /tmp/test.log /tmp/apk.log /tmp/pytest.log; do
+              if [ -f "$f" ]; then
+                echo "<details><summary>$f</summary>"
+                echo
+                echo '```'
+                tail -c 7000 "$f"
+                echo '```'
+                echo "</details>"
+              fi
+            done
+          } > /tmp/pr-comment.md
+          gh pr comment "${{ github.event.pull_request.number }}" --repo "${{ github.repository }}" --body-file /tmp/pr-comment.md || true
           python scripts/smoke_test.py --base-url http://127.0.0.1:8010/api/v1
 
   docker:

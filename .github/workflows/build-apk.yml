@@ -92,3 +92,24 @@ jobs:
           name: turkmen-ses-debug-apk
           path: build/app/outputs/flutter-apk/app-debug.apk
           if-no-files-found: error
+
+      - name: Report logs to PR
+        if: failure() && github.event_name == 'pull_request'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          {
+            echo "### CI log — ${{ github.workflow }} (\`${{ github.sha }}\`)"
+            echo
+            for f in /tmp/pub.log /tmp/br.log /tmp/analyze.log /tmp/test.log /tmp/apk.log /tmp/pytest.log; do
+              if [ -f "$f" ]; then
+                echo "<details><summary>$f</summary>"
+                echo
+                echo '```'
+                tail -c 7000 "$f"
+                echo '```'
+                echo "</details>"
+              fi
+            done
+          } > /tmp/pr-comment.md
+          gh pr comment "${{ github.event.pull_request.number }}" --repo "${{ github.repository }}" --body-file /tmp/pr-comment.md || true
