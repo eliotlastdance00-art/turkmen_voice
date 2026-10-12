@@ -78,7 +78,7 @@ class ApiClient implements ApiClientLike {
       data: <String, dynamic>{
         'device_id': deviceId,
         if (displayName != null && displayName.trim().isNotEmpty) 'display_name': displayName.trim(),
-        avatarSeed: ?avatarSeed,
+        'avatar_seed': ?avatarSeed,
         'consent_type': consentType,
       },
     );
@@ -88,9 +88,9 @@ class ApiClient implements ApiClientLike {
 
   Future<Map<String, dynamic>> updateMe({String? displayName, int? avatarSeed, String? consentType}) {
     return _patchMap('/users/me', <String, dynamic>{
-      displayName: ?displayName,
-      avatarSeed: ?avatarSeed,
-      consentType: ?consentType,
+      'display_name': ?displayName,
+      'avatar_seed': ?avatarSeed,
+      'consent_type': ?consentType,
     });
   }
 
