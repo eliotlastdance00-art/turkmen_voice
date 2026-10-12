@@ -6,7 +6,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 
-import 'package:turkmen_ses/core/network/api_client.dart';
 import 'package:turkmen_ses/core/network/api_contract.dart';
 import 'package:turkmen_ses/core/network/api_exception.dart';
 import 'package:turkmen_ses/core/storage/app_database.dart';
@@ -242,4 +241,4 @@ class RatingQueue {
   }
 }
 
-final ratingQueueProvider = Provider<RatingQueue>((ref) => RatingQueue(ref.watch(databaseProvider)));
+final ratingQueueServiceProvider = Provider<RatingQueue>((ref) => RatingQueue(ref.watch(databaseProvider)));

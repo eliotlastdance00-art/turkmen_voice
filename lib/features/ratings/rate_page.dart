@@ -94,7 +94,7 @@ class _RatePageState extends ConsumerState<RatePage> {
       });
     } on ApiException catch (error) {
       if (error.offline || error.isNetwork) {
-        await ref.read(ratingQueueProvider).queue(
+        await ref.read(ratingQueueServiceProvider).queue(
               recordingId: recordingId,
               score: _score,
               matchesText: _matchesText,

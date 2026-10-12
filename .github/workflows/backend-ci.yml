@@ -39,7 +39,7 @@ jobs:
           if [ $status -ne 0 ]; then
             # ýalňyşlyklary GitHub annotation görnüşinde görkez (analiz aňsat bolar)
             grep -E "(FAILED|ERROR|Error:|assert)" /tmp/pytest.log | tail -6 | while IFS= read -r line; do
-              echo "::error title=pytest::\${line}"
+              echo "::error title=pytest::${line}"
             done
           fi
           exit $status

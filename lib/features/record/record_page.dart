@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:just_audio/just_audio.dart';
 
 import 'package:turkmen_ses/core/config/app_config.dart';
+import 'package:turkmen_ses/core/storage/app_database.dart';
 import 'package:turkmen_ses/core/storage/app_preferences.dart';
 import 'package:turkmen_ses/core/theme/app_theme.dart';
 import 'package:turkmen_ses/core/widgets/app_widgets.dart';
@@ -44,7 +45,7 @@ class _RecordPageState extends ConsumerState<RecordPage> {
     }
     recorder.prepare(
       sentenceId: sentence.id,
-      text: sentence.text,
+      text: sentence.textValue,
       category: sentence.category,
       packageId: sentence.packageId,
     );
@@ -60,7 +61,7 @@ class _RecordPageState extends ConsumerState<RecordPage> {
       if (sentence != null) {
         ref.read(recorderProvider.notifier).prepare(
               sentenceId: sentence.id,
-              text: sentence.text,
+              text: sentence.textValue,
               category: sentence.category,
               packageId: sentence.packageId,
             );
