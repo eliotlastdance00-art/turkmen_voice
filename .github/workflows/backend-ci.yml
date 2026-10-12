@@ -31,7 +31,26 @@ jobs:
         run: pip install -r requirements-dev.txt
 
       - name: Run API contract tests
-        run: python -m pytest tests -q
+        run: |
+          set +e
+          python -m pytest tests -q --tb=line > /tmp/pytest.log 2>&1
+          status=$?
+          cat /tmp/pytest.log
+          if [ $status -ne 0 ]; then
+            # ýalňyşlyklary GitHub annotation görnüşinde görkez (analiz aňsat bolar)
+            grep -E "(FAILED|ERROR|Error:|assert)" /tmp/pytest.log | tail -6 | while IFS= read -r line; do
+              echo "::error title=pytest::\${line}"
+            done
+          fi
+          exit $status
+
+      - name: Upload pytest log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pytest-log
+          path: /tmp/pytest.log
+          if-no-files-found: ignore
 
       - name: Smoke test a live server
         run: |
