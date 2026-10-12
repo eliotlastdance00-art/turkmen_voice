@@ -37,7 +37,6 @@ jobs:
     name: Trigger Render deploy
     needs: verify
     runs-on: ubuntu-latest
-    if: ${{ github.event_name == 'workflow_dispatch' || github.ref == 'refs/heads/main' }}
     steps:
       - name: Deploy hook bar bolsa iber
         env:
@@ -51,10 +50,9 @@ jobs:
           echo "Render deploy başladyldy."
 
   fly:
-    name: Deploy to Fly.io
+    name: Deploy to Fly.io (islege görä)
     needs: verify
     runs-on: ubuntu-latest
-    if: ${{ github.event_name == 'workflow_dispatch' }}
     steps:
       - uses: actions/checkout@v4
       - name: Fly token ýok bolsa geç
@@ -73,14 +71,27 @@ jobs:
         run: flyctl deploy --remote-only
 
   vps:
-    name: Deploy to VPS (docker compose)
+    name: Deploy to VPS (docker compose, islege görä)
     needs: verify
     runs-on: ubuntu-latest
-    if: ${{ github.event_name == 'workflow_dispatch' && secrets.DEPLOY_SSH_HOST != '' }}
     steps:
+      - name: Sunucu bar bolsa dowam et
+        id: guard
+        env:
+          SSH_HOST: ${{ secrets.DEPLOY_SSH_HOST }}
+        run: |
+          if [ -z "$SSH_HOST" ]; then
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+            echo "DEPLOY_SSH_* secretleri ýok — VPS deploy geçirilýär."
+          else
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          fi
+
       - uses: actions/checkout@v4
+        if: steps.guard.outputs.skip == 'false'
 
       - name: Copy backend to server
+        if: steps.guard.outputs.skip == 'false'
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.DEPLOY_SSH_HOST }}
@@ -91,6 +102,7 @@ jobs:
           strip_components: 1
 
       - name: Rebuild and restart
+        if: steps.guard.outputs.skip == 'false'
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.DEPLOY_SSH_HOST }}
