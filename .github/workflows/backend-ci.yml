@@ -33,24 +33,15 @@ jobs:
       - name: Run API contract tests
         run: |
           set +e
-          python -m pytest tests -q --tb=line > /tmp/pytest.log 2>&1
+          python -m pytest tests -q --tb=short > /tmp/pytest.log 2>&1
           status=$?
-          cat /tmp/pytest.log
+          tail -60 /tmp/pytest.log
           if [ $status -ne 0 ]; then
-            # ýalňyşlyklary GitHub annotation görnüşinde görkez (analiz aňsat bolar)
-            grep -E "(FAILED|ERROR|Error:|assert)" /tmp/pytest.log | tail -6 | while IFS= read -r line; do
+            grep -E "(FAILED|ERROR|Error:|assert)" /tmp/pytest.log | tail -10 | while IFS= read -r line; do
               echo "::error title=pytest::${line}"
             done
           fi
           exit $status
-
-      - name: Upload pytest log
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: pytest-log
-          path: /tmp/pytest.log
-          if-no-files-found: ignore
 
       - name: Smoke test a live server
         run: |
@@ -58,6 +49,7 @@ jobs:
           for i in $(seq 1 30); do
             curl -sf http://127.0.0.1:8010/api/v1/health >/dev/null && break || sleep 1
           done
+          python scripts/smoke_test.py --base-url http://127.0.0.1:8010/api/v1 | tee /tmp/smoke.log
 
       - name: Report logs to PR
         if: failure() && github.event_name == 'pull_request'
@@ -65,9 +57,9 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           {
-            echo "### CI log — ${{ github.workflow }} (\`${{ github.sha }}\`)"
+            echo "### Backend CI log (\`${{ github.sha }}\`)"
             echo
-            for f in /tmp/pub.log /tmp/br.log /tmp/analyze.log /tmp/test.log /tmp/apk.log /tmp/pytest.log; do
+            for f in /tmp/pytest.log /tmp/smoke.log; do
               if [ -f "$f" ]; then
                 echo "<details><summary>$f</summary>"
                 echo
@@ -79,7 +71,6 @@ jobs:
             done
           } > /tmp/pr-comment.md
           gh pr comment "${{ github.event.pull_request.number }}" --repo "${{ github.repository }}" --body-file /tmp/pr-comment.md || true
-          python scripts/smoke_test.py --base-url http://127.0.0.1:8010/api/v1
 
   docker:
     name: Build image
