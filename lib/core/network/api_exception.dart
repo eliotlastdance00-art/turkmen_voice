@@ -31,6 +31,8 @@ class ApiException implements Exception {
         );
       case DioExceptionType.connectionError:
       case DioExceptionType.unknown:
+      default:
+        // şu ýerde `default` hem bar: dio-nyň täze görnüşlerinde hem döwülmez
         return ApiException(
           'Serwere baglanyp bolmady. Internet ýok bolsa, ýazgylar telefonda saklanar.',
           statusCode: status,

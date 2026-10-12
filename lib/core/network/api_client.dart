@@ -78,7 +78,7 @@ class ApiClient implements ApiClientLike {
       data: <String, dynamic>{
         'device_id': deviceId,
         if (displayName != null && displayName.trim().isNotEmpty) 'display_name': displayName.trim(),
-        if (avatarSeed != null) 'avatar_seed': avatarSeed,
+        avatarSeed: ?avatarSeed,
         'consent_type': consentType,
       },
     );
@@ -88,13 +88,14 @@ class ApiClient implements ApiClientLike {
 
   Future<Map<String, dynamic>> updateMe({String? displayName, int? avatarSeed, String? consentType}) {
     return _patchMap('/users/me', <String, dynamic>{
-      if (displayName != null) 'display_name': displayName,
-      if (avatarSeed != null) 'avatar_seed': avatarSeed,
-      if (consentType != null) 'consent_type': consentType,
+      displayName: ?displayName,
+      avatarSeed: ?avatarSeed,
+      consentType: ?consentType,
     });
   }
 
   // -------------------------------------------------------------- recordings
+  @override
   Future<Map<String, dynamic>> uploadRecording({
     required String filePath,
     required Map<String, dynamic> metadata,
@@ -129,6 +130,7 @@ class ApiClient implements ApiClientLike {
     return data.cast<Map<String, dynamic>>();
   }
 
+  @override
   Future<Map<String, dynamic>> submitRating({
     required String recordingId,
     required int score,

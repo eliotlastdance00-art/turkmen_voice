@@ -51,7 +51,7 @@ class Settings:
 
     # --- storage ---------------------------------------------------------
     data_dir: Path = field(default_factory=lambda: Path(os.getenv("DATA_DIR", "app/data")))
-    seed_file: Path = field(default_factory=lambda: Path(os.getenv("SEED_FILE", "app/data/sentences_seed.json")))
+    seed_file: Path = field(default_factory=lambda: Path(os.getenv("SEED_FILE", "app/seed/sentences_seed.json")))
 
     # --- audio contract (Whisper wants 16 kHz mono pcm16) ----------------
     target_sample_rate: int = _env_int("TARGET_SAMPLE_RATE", 16_000)

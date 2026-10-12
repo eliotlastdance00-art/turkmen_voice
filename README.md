@@ -1,112 +1,118 @@
-# Türkmen Ses — Flutter MVP
+# Türkmen Ses — Türkmençe ses maglumat ýygnama ulgamy
 
-Offline-first Türkmençe ses maglumat ýygnama programmasynyň advanced başlangyç gurluşy.
-
-## Arhitektura
+Whisper (we beýleki STT modelleri) üçin **arassa, barlanan türkmençe ses + tekst**
+datasetini ýygnamak ulgamy. Üç bölekden durýar:
 
 ```text
-lib/
-  app/                 App root
-  core/
-    router/            GoRouter navigasiýasy
-    storage/           Drift/SQLite database
-    theme/             Material 3 tema
-    network/           API we sync üçin ýer
-  features/
-    home/              Ýazgy başlamak ekrany
-    recordings/        Ýerli ýazgylaryň sanawy
-    consent/           Razylyk akymy
-    settings/          Gizlinlik we sazlamalar
+turkmen_voice/
+  lib/        Flutter programma (Android/iOS) — offline first, 5 bölümli UI
+  backend/    FastAPI + SQLite — API, admin panel, Whisper eksporty
+  docs        DEPLOYMENT_GUIDE.md, MASLAHATLAR.md, Turkmen_Ses_MVP_Dokument.md
 ```
 
-## Gurnamak
+## Häzirki ýagdaý (v0.2 / API v0.3)
 
-**Gerekli:** Flutter SDK 3.44+ (maslahat: 3.47.7 stable), JDK 17 we Android SDK.
-Minimum: Flutter 3.44+ we Dart 3.12+ (`record: ^7.0.0` ücin). Köne Flutter bilen `flutter pub get` şowsuz.
+| Bölüm | Ýagdaý |
+|---|---|
+| Ses ýazgy (16 kHz mono WAV) | ✅ `AudioEncoder.wav` — Whisper formaty bilen birmeňzeş |
+| Offline işlemek | ✅ drift/SQLite + nobat + awtomatik sinhronizasiýa |
+| Sözlem paketleri | ✅ 6 paket / 215 sözlem (`backend/app/seed/sentences_seed.json`) |
+| Serwer tarapy barlag | ✅ WAV barlagy, durasiýa ölçegi, sha256, sessizlik süzgüji |
+| Jemgyýetçilik reýtingi | ✅ ýyldyz + «gabat gelýär/meýär» + 3+ baha → awtomatik tassyklama |
+| Ball / dereje / nyşanlar | ✅ 6 dereje, 8 nyşan, günlük yhlas |
+| Admin panel | ✅ filtr, diňlemek, tassyk/ret, hil hasabaty, eksportlar |
+| Whisper eksporty | ✅ JSONL / Whisper JSONL / CSV / TSV / ZIP + report.json |
+| Fine-tuning skriptleri | ✅ `build_whisper_dataset.py`, `whisper_finetune.py` |
+| Deploy | ✅ Docker, Render, Fly.io, VPS (compose + Caddy), Azure |
+
+## Çalt başlangyç
+
+### 1. Backend
 
 ```bash
-cd turkmen_ses
+cd backend
+python -m venv .venv && source .venv/bin/activate
+pip install -r requirements-dev.txt
+
+python -m pytest tests -q            # 14 contract test
+python scripts/seed_demo.py --takes 40   # demo maglumat (reýting tablisasy üçin)
+
+DATA_DIR=app/data ADMIN_TOKEN=secret uvicorn app.main:app --host 0.0.0.0 --port 8000
+python scripts/smoke_test.py --base-url http://127.0.0.1:8000/api/v1 --admin-token secret
+```
+
+- Admin panel: <http://127.0.0.1:8000/admin/>
+- Swagger: <http://127.0.0.1:8000/docs>
+
+### 2. Programma (Flutter)
+
+```bash
 flutter pub get
 dart run build_runner build --delete-conflicting-outputs
-flutter analyze
-flutter test
+
+# emulyator
 flutter run --dart-define=API_BASE_URL=http://10.0.2.2:8000/api/v1
+
+# hakyky telefon (LAN)
+flutter run --dart-define=API_BASE_URL=http://192.168.1.50:8000/api/v1
 ```
 
-## APK build (lokal)
+APK: **Actions → Build Android APK** (repo variable `API_BASE_URL` goýuň) ýa-da
+`flutter build apk --release --dart-define=API_BASE_URL=...`.
+
+### 3. Serwere çykarmak
+
+`DEPLOYMENT_GUIDE.md` — Fly.io / Render / VPS / Azure ädimme-ädim. Iň gysgasy:
 
 ```bash
-# Debug APK
-flutter build apk --debug --dart-define=API_BASE_URL=http://10.0.2.2:8000/api/v1
-
-# Release APK
-flutter build apk --release --dart-define=API_BASE_URL=http://10.0.2.2:8000/api/v1
+cd backend
+fly launch --copy-config --name turkmen-ses-api
+fly volumes create turkmen_ses_data --size 3
+fly secrets set ADMIN_TOKEN=$(openssl rand -hex 16)
+fly deploy
 ```
 
-Çykýan APK ýoly: `build/app/outputs/flutter-apk/app-debug.apk` (weya `app-release.apk`).
+## API gysgaça
 
-`android/` bukjasy repo-da bar — şonuñ ücin `flutter create` gerek däl.
+| Metod | Ýol | Bellik |
+|---|---|---|
+| GET | `/api/v1/health`, `/health/ready` | saglyk barlagy |
+| GET | `/api/v1/sentences`, `/sentences/packages`, `/sentences/random` | sözlemler |
+| POST | `/api/v1/recordings` | multipart: `recording_id, sentence_id, text, consent_type, duration_ms, audio_file` (+ islege görä `category, package_id, sample_rate, channels, bit_depth`) |
+| GET | `/api/v1/recordings/{id}`, `/{id}/audio`, `/{id}/ratings` | ýazgy, ses, baha |
+| DELETE | `/api/v1/recordings/{id}` | öz ýazgyňy pozmak (razylygy yzyna almak) |
+| POST | `/api/v1/users/register` | anonim hasap (`device_id` → `tk_<user_id>` token) |
+| GET | `/api/v1/users/me`, `/leaderboard`, `/stats/overview`, `/stats/me` | profil we reýting |
+| GET | `/api/v1/ratings/queue` | başgalaryň barlamaly ýazgylary |
+| POST | `/api/v1/recordings/{id}/ratings`, `/{id}/report` | baha bermek / şikaýat |
+| GET | `/api/v1/admin/*` | `X-Admin-Token` gerek (statistika, tassyk, eksport) |
 
-API adresleri:
+## Maglumat ölçegi (Whisper taýýarlygy)
 
-- Android emulator: `http://10.0.2.2:8000/api/v1`
-- iOS simulator: `http://127.0.0.1:8000/api/v1`
-- Real device: `http://YOUR_COMPUTER_LAN_IP:8000/api/v1`
-
-Backend bilen bile işletmek üçin:
+- Format: **16 kHz · mono · 16 bit PCM WAV**, 0.5–15 sekunt
+- Her ýazgy üçin: `duration_ms` (serwer ölçeýär), `sha256`, `community_score`,
+  `rating_count`, `verified`, `speaker_id`, `category`, `package_id`
+- Ýazgyda header bolmasa hem (köne APK) serwer dogry WAV-a öwürýär
+- Diňe **tassiklanan** ýazgylar eksport edilýär (`approved`)
 
 ```bash
-cd ../turkmen_ses_backend
-uvicorn app.main:app --host 0.0.0.0 --port 8000
-
-cd ../turkmen_ses
-flutter run --dart-define=API_BASE_URL=http://10.0.2.2:8000/api/v1
+curl -H "X-Admin-Token: $TOKEN" $API/admin/export.zip -o bundle.zip   # audio + metadata
+python backend/scripts/build_whisper_dataset.py --input dataset --output whisper_dataset
+python backend/scripts/whisper_finetune.py --dataset whisper_dataset --model openai/whisper-small
 ```
 
-`app_database.g.dart` Drift tarapyndan awtomatiki döredilýär. Ol source control-a goşulyp bilner, ýöne generated faýl bolany üçin täzeden generasiýa etmek maslahat berilýär.
+## Goşmaça dokumentler
 
-## Ilkinji implementation ýagdaýy
-
-Taýýar:
-
-- Material 3 UI
-- GoRouter navigation
-- Riverpod dependency injection
-- Drift SQLite schema
-- Offline recording metadata modeli
-- Recording status lifecycle
-- Consent screen
-- Home / Recordings / Settings screens
-- Dataset üçin gerek bolan text + audio metadata gurluşy
-
-Häzirki implementation:
-
-1. `record` package bilen hakyky mikrofon ýazgysy.
-2. `path_provider` arkaly audio bukjasy.
-3. WAV 16 kHz mono recording sazlamasy.
-4. `just_audio` bilen preview.
-5. Drift/SQLite lokal storage.
-6. Dio bilen multipart upload.
-7. Connectivity-based sync queue.
-8. FastAPI backend bilen birleşme.
-9. Settings ekranlarynda manual sync düwmesi.
+- `DEPLOYMENT_GUIDE.md` — serwere çykarmak, backup, barlag sanawy
+- `MASLAHATLAR.md` — indiki ädimler we gowulandyrmak boýunça maslahatlar
+- `Turkmen_Ses_MVP_Dokument.md` — başdaky MVP kesgitlemesi
+- `backend/ARCHITECTURE.md` — backend arhitekturasy (gatlaklar)
 
 ## Android rugsatlar
 
-`android/app/src/main/AndroidManifest.xml`-de şu rugsatlar bar:
+`android/app/src/main/AndroidManifest.xml`:
 
-- `android.permission.INTERNET` — ses ýazgylary serwere ibermek üçün (dio).
-- `android.permission.RECORD_AUDIO` — mikrofon ýazgysy üçün (`record`).
-
-Bu rugsatlar endi repo-da bar — täzeden goşmak gerek däl.
-
-```xml
-<uses-permission android:name="android.permission.RECORD_AUDIO" />
-```
-
-iOS `ios/Runner/Info.plist` içine:
-
-```xml
-<key>NSMicrophoneUsageDescription</key>
-<string>Türkmençe ses ýazgylaryny döretmek üçin mikrofon ulanylýar.</string>
-```
+- `android.permission.INTERNET` — ýazgylary serwere ibermek
+- `android.permission.RECORD_AUDIO` — mikrofon
+- `@xml/network_security_config` — beta wagtynda lokal HTTP serwere baglanmak üçin
+  (production-da HTTPS-e geçiriň)

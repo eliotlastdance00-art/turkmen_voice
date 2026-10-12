@@ -66,7 +66,7 @@ class GradientHeader extends StatelessWidget {
                 ],
               ),
             ),
-            if (trailing != null) trailing!,
+            ?trailing,
           ],
         ),
       ),
@@ -109,7 +109,7 @@ class SectionTitle extends StatelessWidget {
               ],
             ),
           ),
-          if (action != null) action!,
+          ?action,
         ],
       ),
     );

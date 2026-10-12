@@ -327,7 +327,7 @@ def _build() -> dict:
 
 def main() -> None:
     payload = _build()
-    target = Path(__file__).parent.parent / "app" / "data" / "sentences_seed.json"
+    target = Path(__file__).parent.parent / "app" / "seed" / "sentences_seed.json"
     target.write_text(json.dumps(payload, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
     print(f"wrote {len(payload['sentences'])} sentences to {target}")
 

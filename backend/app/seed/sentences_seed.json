@@ -1,0 +1,1986 @@
+{
+ "language": "tk",
+ "version": 1,
+ "created_at": "2026-01-01T00:00:00+00:00",
+ "packages": [
+  {
+   "id": "package_001",
+   "name": "Gündelik gepleşik",
+   "description": "Gündelik durmuşda iň köp ulanylýan gysga sözlemler.",
+   "category": "daily",
+   "language": "tk"
+  },
+  {
+   "id": "package_002",
+   "name": "Sanlar we wagt",
+   "description": "Sanlar, sagat, seneler we mukdarlar bilen sözlemler.",
+   "category": "numbers",
+   "language": "tk"
+  },
+  {
+   "id": "package_003",
+   "name": "Tebigat we howa",
+   "description": "Howa, pasyllar, tebigat we daşky gurşaw.",
+   "category": "nature",
+   "language": "tk"
+  },
+  {
+   "id": "package_004",
+   "name": "Bilim, iş we tehnologiýa",
+   "description": "Mekdep, iş ýerli we tehnologiýa bilen bagly sözlemler.",
+   "category": "education",
+   "language": "tk"
+  },
+  {
+   "id": "package_005",
+   "name": "Soraglar we jogaplar",
+   "description": "Gepleşikde ulanylýan sorag we jogap sözlemleri.",
+   "category": "questions",
+   "language": "tk"
+  },
+  {
+   "id": "package_006",
+   "name": "Ýerler we medeniýet",
+   "description": "Türkmenistanyň ýerleri, taryhy we medeni mirasy.",
+   "category": "culture",
+   "language": "tk"
+  }
+ ],
+ "sentences": [
+  {
+   "id": "sentence_000001",
+   "text": "Men şu gün täze kitap okadym.",
+   "language": "tk",
+   "category": "daily",
+   "package_id": "package_001",
+   "difficulty": 1,
+   "order": 0
+  },
+  {
+   "id": "sentence_000002",
+   "text": "Ertir irden işe gitmeli bolaryn.",
+   "language": "tk",
+   "category": "daily",
+   "package_id": "package_001",
+   "difficulty": 1,
+   "order": 1
+  },
+  {
+   "id": "sentence_000003",
+   "text": "Maşgalam bilen agşam nahar iýýäris.",
+   "language": "tk",
+   "category": "daily",
+   "package_id": "package_001",
+   "difficulty": 1,
+   "order": 2
+  },
+  {
+   "id": "sentence_000004",
+   "text": "Ejeme bazarda gül satyn alaryn.",
+   "language": "tk",
+   "category": "daily",
+   "package_id": "package_001",
+   "difficulty": 1,
+   "order": 3
+  },
+  {
+   "id": "sentence_000005",
+   "text": "Günüň dowamynda köp suw içmeli.",
+   "language": "tk",
+   "category": "daily",
+   "package_id": "package_001",
+   "difficulty": 1,
+   "order": 4
+  },
+  {
+   "id": "sentence_000006",
+   "text": "Çagalar howluda top oýnaýarlar.",
+   "language": "tk",
+   "category": "daily",
+   "package_id": "package_001",
+   "difficulty": 1,
+   "order": 5
+  },
+  {
+   "id": "sentence_000007",
+   "text": "Men her gün irden turýaryn.",
+   "language": "tk",
+   "category": "daily",
+   "package_id": "package_001",
+   "difficulty": 1,
+   "order": 6
+  },
+  {
+   "id": "sentence_000008",
+   "text": "Şu gün howa örän yssy boldy.",
+   "language": "tk",
+   "category": "daily",
+   "package_id": "package_001",
+   "difficulty": 1,
+   "order": 7
+  },
+  {
+   "id": "sentence_000009",
+   "text": "Aşpez tagam bişirmäge başlady.",
+   "language": "tk",
+   "category": "daily",
+   "package_id": "package_001",
+   "difficulty": 1,
+   "order": 8
+  },
+  {
+   "id": "sentence_000010",
+   "text": "Men size kömek etmäge taýýar.",
+   "language": "tk",
+   "category": "daily",
+   "package_id": "package_001",
+   "difficulty": 1,
+   "order": 9
+  },
+  {
+   "id": "sentence_000011",
+   "text": "Kitaphanada oturup işledim.",
+   "language": "tk",
+   "category": "daily",
+   "package_id": "package_001",
+   "difficulty": 1,
+   "order": 10
+  },
+  {
+   "id": "sentence_000012",
+   "text": "Geljek hepde oba gitjek.",
+   "language": "tk",
+   "category": "daily",
+   "package_id": "package_001",
+   "difficulty": 1,
+   "order": 11
+  },
+  {
+   "id": "sentence_000013",
+   "text": "Meniň iş günüm sagat sekizde başlaýar.",
+   "language": "tk",
+   "category": "daily",
+   "package_id": "package_001",
+   "difficulty": 1,
+   "order": 12
+  },
+  {
+   "id": "sentence_000014",
+   "text": "Dostum bilen telefon arkaly gürleşdim.",
+   "language": "tk",
+   "category": "daily",
+   "package_id": "package_001",
+   "difficulty": 1,
+   "order": 13
+  },
+  {
+   "id": "sentence_000015",
+   "text": "Öýümi arassalap, soň dynç aldym.",
+   "language": "tk",
+   "category": "daily",
+   "package_id": "package_001",
+   "difficulty": 1,
+   "order": 14
+  },
+  {
+   "id": "sentence_000016",
+   "text": "Şu gün ýekşenbe, dükanlar ýapyk.",
+   "language": "tk",
+   "category": "daily",
+   "package_id": "package_001",
+   "difficulty": 1,
+   "order": 15
+  },
+  {
+   "id": "sentence_000017",
+   "text": "Kakam myhmanlary garşylady.",
+   "language": "tk",
+   "category": "daily",
+   "package_id": "package_001",
+   "difficulty": 1,
+   "order": 16
+  },
+  {
+   "id": "sentence_000018",
+   "text": "Men täze aýakgap satyn aldym.",
+   "language": "tk",
+   "category": "daily",
+   "package_id": "package_001",
+   "difficulty": 1,
+   "order": 17
+  },
+  {
+   "id": "sentence_000019",
+   "text": "Gapyny ýapyp, jaňy goýber.",
+   "language": "tk",
+   "category": "daily",
+   "package_id": "package_001",
+   "difficulty": 1,
+   "order": 18
+  },
+  {
+   "id": "sentence_000020",
+   "text": "Çaý içip, bir az gepleşeliň.",
+   "language": "tk",
+   "category": "daily",
+   "package_id": "package_001",
+   "difficulty": 1,
+   "order": 19
+  },
+  {
+   "id": "sentence_000021",
+   "text": "Bize agşam myhman gelmegi mümkin.",
+   "language": "tk",
+   "category": "daily",
+   "package_id": "package_001",
+   "difficulty": 1,
+   "order": 20
+  },
+  {
+   "id": "sentence_000022",
+   "text": "Ol jaň edip, nahar sargyt etdi.",
+   "language": "tk",
+   "category": "daily",
+   "package_id": "package_001",
+   "difficulty": 1,
+   "order": 21
+  },
+  {
+   "id": "sentence_000023",
+   "text": "Meniň doganym mekdepde okaýar.",
+   "language": "tk",
+   "category": "daily",
+   "package_id": "package_001",
+   "difficulty": 1,
+   "order": 22
+  },
+  {
+   "id": "sentence_000024",
+   "text": "Agşamlyk nahar taýýar boldy.",
+   "language": "tk",
+   "category": "daily",
+   "package_id": "package_001",
+   "difficulty": 1,
+   "order": 23
+  },
+  {
+   "id": "sentence_000025",
+   "text": "Men iki sany alma we bir armyt aldym.",
+   "language": "tk",
+   "category": "daily",
+   "package_id": "package_001",
+   "difficulty": 2,
+   "order": 24
+  },
+  {
+   "id": "sentence_000026",
+   "text": "Ýolda goňşym bilen salamlaşdym.",
+   "language": "tk",
+   "category": "daily",
+   "package_id": "package_001",
+   "difficulty": 1,
+   "order": 25
+  },
+  {
+   "id": "sentence_000027",
+   "text": "Öý işleri köp, ýöne wagtym az.",
+   "language": "tk",
+   "category": "daily",
+   "package_id": "package_001",
+   "difficulty": 1,
+   "order": 26
+  },
+  {
+   "id": "sentence_000028",
+   "text": "Çagalar irden mekdebe gidýärler.",
+   "language": "tk",
+   "category": "daily",
+   "package_id": "package_001",
+   "difficulty": 1,
+   "order": 27
+  },
+  {
+   "id": "sentence_000029",
+   "text": "Ussa diwary reňkläp taýýarlady.",
+   "language": "tk",
+   "category": "daily",
+   "package_id": "package_001",
+   "difficulty": 1,
+   "order": 28
+  },
+  {
+   "id": "sentence_000030",
+   "text": "Men ertirlik üçin ýumurtga we çörek iýdim.",
+   "language": "tk",
+   "category": "daily",
+   "package_id": "package_001",
+   "difficulty": 2,
+   "order": 29
+  },
+  {
+   "id": "sentence_000031",
+   "text": "Kir ýuwup, soň çaý demledim.",
+   "language": "tk",
+   "category": "daily",
+   "package_id": "package_001",
+   "difficulty": 1,
+   "order": 30
+  },
+  {
+   "id": "sentence_000032",
+   "text": "Men ertir şähere gitmegi meýilleşdirýärin.",
+   "language": "tk",
+   "category": "daily",
+   "package_id": "package_001",
+   "difficulty": 1,
+   "order": 31
+  },
+  {
+   "id": "sentence_000033",
+   "text": "Ejem miwe jöwzasyndan kompot bişirdi.",
+   "language": "tk",
+   "category": "daily",
+   "package_id": "package_001",
+   "difficulty": 1,
+   "order": 32
+  },
+  {
+   "id": "sentence_000034",
+   "text": "Biz howluda agaç oturdysdyk.",
+   "language": "tk",
+   "category": "daily",
+   "package_id": "package_001",
+   "difficulty": 1,
+   "order": 33
+  },
+  {
+   "id": "sentence_000035",
+   "text": "Gijeki gepleşik uzaga çekdi.",
+   "language": "tk",
+   "category": "daily",
+   "package_id": "package_001",
+   "difficulty": 1,
+   "order": 34
+  },
+  {
+   "id": "sentence_000036",
+   "text": "Men täze futbol kubogyny satyn aldym.",
+   "language": "tk",
+   "category": "daily",
+   "package_id": "package_001",
+   "difficulty": 1,
+   "order": 35
+  },
+  {
+   "id": "sentence_000037",
+   "text": "Çagalar süýtli çaý içmegi halaýarlar.",
+   "language": "tk",
+   "category": "daily",
+   "package_id": "package_001",
+   "difficulty": 1,
+   "order": 36
+  },
+  {
+   "id": "sentence_000038",
+   "text": "Seniň aýdanyň dogry, men razylaşýaryn.",
+   "language": "tk",
+   "category": "daily",
+   "package_id": "package_001",
+   "difficulty": 1,
+   "order": 37
+  },
+  {
+   "id": "sentence_000039",
+   "text": "Men birnäçe ýyllap bu ýerde işleýärin.",
+   "language": "tk",
+   "category": "daily",
+   "package_id": "package_001",
+   "difficulty": 1,
+   "order": 38
+  },
+  {
+   "id": "sentence_000040",
+   "text": "Şu gün öýüme ir dolandym.",
+   "language": "tk",
+   "category": "daily",
+   "package_id": "package_001",
+   "difficulty": 1,
+   "order": 39
+  },
+  {
+   "id": "sentence_000041",
+   "text": "Häzir sagat on iki boldy.",
+   "language": "tk",
+   "category": "numbers",
+   "package_id": "package_002",
+   "difficulty": 1,
+   "order": 0
+  },
+  {
+   "id": "sentence_000042",
+   "text": "Bu kitabyň bahasy otuz manat.",
+   "language": "tk",
+   "category": "numbers",
+   "package_id": "package_002",
+   "difficulty": 1,
+   "order": 1
+  },
+  {
+   "id": "sentence_000043",
+   "text": "Men on bäş minut garaşdym.",
+   "language": "tk",
+   "category": "numbers",
+   "package_id": "package_002",
+   "difficulty": 1,
+   "order": 2
+  },
+  {
+   "id": "sentence_000044",
+   "text": "Ýyl iki müň ýigrimi altynjy ýyl.",
+   "language": "tk",
+   "category": "numbers",
+   "package_id": "package_002",
+   "difficulty": 1,
+   "order": 3
+  },
+  {
+   "id": "sentence_000045",
+   "text": "Tomusda üç aý dynç alýarys.",
+   "language": "tk",
+   "category": "numbers",
+   "package_id": "package_002",
+   "difficulty": 1,
+   "order": 4
+  },
+  {
+   "id": "sentence_000046",
+   "text": "Sanawy ikinji gezek barladym.",
+   "language": "tk",
+   "category": "numbers",
+   "package_id": "package_002",
+   "difficulty": 1,
+   "order": 5
+  },
+  {
+   "id": "sentence_000047",
+   "text": "Biziň obamyzda ýüz otuz maşgala ýaşaýar.",
+   "language": "tk",
+   "category": "numbers",
+   "package_id": "package_002",
+   "difficulty": 1,
+   "order": 6
+  },
+  {
+   "id": "sentence_000048",
+   "text": "Kitabymyň basylan ýyly bäş ýyl öň.",
+   "language": "tk",
+   "category": "numbers",
+   "package_id": "package_002",
+   "difficulty": 1,
+   "order": 7
+  },
+  {
+   "id": "sentence_000049",
+   "text": "Biz üçünji gatda ýaşaýarys.",
+   "language": "tk",
+   "category": "numbers",
+   "package_id": "package_002",
+   "difficulty": 1,
+   "order": 8
+  },
+  {
+   "id": "sentence_000050",
+   "text": "Ýedi günüň dowamynda işledim.",
+   "language": "tk",
+   "category": "numbers",
+   "package_id": "package_002",
+   "difficulty": 1,
+   "order": 9
+  },
+  {
+   "id": "sentence_000051",
+   "text": "Wagtyňy dogry paýlaşmak örän möhüm.",
+   "language": "tk",
+   "category": "numbers",
+   "package_id": "package_002",
+   "difficulty": 1,
+   "order": 10
+  },
+  {
+   "id": "sentence_000052",
+   "text": "Sagat ýedide agşamlyk nahar iýýäris.",
+   "language": "tk",
+   "category": "numbers",
+   "package_id": "package_002",
+   "difficulty": 1,
+   "order": 11
+  },
+  {
+   "id": "sentence_000053",
+   "text": "Sanlar matematikanyň esasy bölegi.",
+   "language": "tk",
+   "category": "numbers",
+   "package_id": "package_002",
+   "difficulty": 1,
+   "order": 12
+  },
+  {
+   "id": "sentence_000054",
+   "text": "Onuň doglan güni ýigriminji maýda.",
+   "language": "tk",
+   "category": "numbers",
+   "package_id": "package_002",
+   "difficulty": 1,
+   "order": 13
+  },
+  {
+   "id": "sentence_000055",
+   "text": "Birinji synpda otuz okuwçy bar.",
+   "language": "tk",
+   "category": "numbers",
+   "package_id": "package_002",
+   "difficulty": 1,
+   "order": 14
+  },
+  {
+   "id": "sentence_000056",
+   "text": "Bäş ýyldan soň ýene duşuşarys.",
+   "language": "tk",
+   "category": "numbers",
+   "package_id": "package_002",
+   "difficulty": 1,
+   "order": 15
+  },
+  {
+   "id": "sentence_000057",
+   "text": "Üç sagatdan soň size jaň ederin.",
+   "language": "tk",
+   "category": "numbers",
+   "package_id": "package_002",
+   "difficulty": 1,
+   "order": 16
+  },
+  {
+   "id": "sentence_000058",
+   "text": "Biziň toparymyzda ýigrimi adam bar.",
+   "language": "tk",
+   "category": "numbers",
+   "package_id": "package_002",
+   "difficulty": 1,
+   "order": 17
+  },
+  {
+   "id": "sentence_000059",
+   "text": "Şu ýylyň dowamynda ýüz müň sözlem ýygnamaly.",
+   "language": "tk",
+   "category": "numbers",
+   "package_id": "package_002",
+   "difficulty": 2,
+   "order": 18
+  },
+  {
+   "id": "sentence_000060",
+   "text": "Ikinji synanyşykda netije gowulaşdy.",
+   "language": "tk",
+   "category": "numbers",
+   "package_id": "package_002",
+   "difficulty": 1,
+   "order": 19
+  },
+  {
+   "id": "sentence_000061",
+   "text": "Müň metr ýol pyýada gitdik.",
+   "language": "tk",
+   "category": "numbers",
+   "package_id": "package_002",
+   "difficulty": 1,
+   "order": 20
+  },
+  {
+   "id": "sentence_000062",
+   "text": "Onuň agramy elli iki kilogram boldy.",
+   "language": "tk",
+   "category": "numbers",
+   "package_id": "package_002",
+   "difficulty": 1,
+   "order": 21
+  },
+  {
+   "id": "sentence_000063",
+   "text": "Ýarym sagatdan soň başlarys.",
+   "language": "tk",
+   "category": "numbers",
+   "package_id": "package_002",
+   "difficulty": 1,
+   "order": 22
+  },
+  {
+   "id": "sentence_000064",
+   "text": "Men bu filmi dört gezek gördüm.",
+   "language": "tk",
+   "category": "numbers",
+   "package_id": "package_002",
+   "difficulty": 1,
+   "order": 23
+  },
+  {
+   "id": "sentence_000065",
+   "text": "Ýygyrmy dört sagat dowam eden ýol.",
+   "language": "tk",
+   "category": "numbers",
+   "package_id": "package_002",
+   "difficulty": 1,
+   "order": 24
+  },
+  {
+   "id": "sentence_000066",
+   "text": "Ýüz ýigrimi kilometr ýol geçdik.",
+   "language": "tk",
+   "category": "numbers",
+   "package_id": "package_002",
+   "difficulty": 1,
+   "order": 25
+  },
+  {
+   "id": "sentence_000067",
+   "text": "Çärýek sagat garaşmagyňyzy haýyş edýärin.",
+   "language": "tk",
+   "category": "numbers",
+   "package_id": "package_002",
+   "difficulty": 1,
+   "order": 26
+  },
+  {
+   "id": "sentence_000068",
+   "text": "Bäş minutdan täzelemäni barlap gör.",
+   "language": "tk",
+   "category": "numbers",
+   "package_id": "package_002",
+   "difficulty": 1,
+   "order": 27
+  },
+  {
+   "id": "sentence_000069",
+   "text": "Alty sany stol we sekiz oturgyç gerek.",
+   "language": "tk",
+   "category": "numbers",
+   "package_id": "package_002",
+   "difficulty": 2,
+   "order": 28
+  },
+  {
+   "id": "sentence_000070",
+   "text": "Dokuzynjy synagda maksat hasyl boldy.",
+   "language": "tk",
+   "category": "numbers",
+   "package_id": "package_002",
+   "difficulty": 1,
+   "order": 29
+  },
+  {
+   "id": "sentence_000071",
+   "text": "Ýigrimi bäş göterim arzanladyş bar.",
+   "language": "tk",
+   "category": "numbers",
+   "package_id": "package_002",
+   "difficulty": 1,
+   "order": 30
+  },
+  {
+   "id": "sentence_000072",
+   "text": "Üçünji tapgyr ertir başlaýar.",
+   "language": "tk",
+   "category": "numbers",
+   "package_id": "package_002",
+   "difficulty": 1,
+   "order": 31
+  },
+  {
+   "id": "sentence_000073",
+   "text": "On minutlyk arakesme yglan edildi.",
+   "language": "tk",
+   "category": "numbers",
+   "package_id": "package_002",
+   "difficulty": 1,
+   "order": 32
+  },
+  {
+   "id": "sentence_000074",
+   "text": "Meniň telefon belgim iki bilen başlaýar.",
+   "language": "tk",
+   "category": "numbers",
+   "package_id": "package_002",
+   "difficulty": 1,
+   "order": 33
+  },
+  {
+   "id": "sentence_000075",
+   "text": "Şu ýazgynyň dowamlylygy on sekiz sekunt.",
+   "language": "tk",
+   "category": "numbers",
+   "package_id": "package_002",
+   "difficulty": 1,
+   "order": 34
+  },
+  {
+   "id": "sentence_000076",
+   "text": "Howanyň ýagdaýy örän gowy.",
+   "language": "tk",
+   "category": "nature",
+   "package_id": "package_003",
+   "difficulty": 1,
+   "order": 0
+  },
+  {
+   "id": "sentence_000077",
+   "text": "Ýagyş ýagýar, şemsiýäňi özüň bilen al.",
+   "language": "tk",
+   "category": "nature",
+   "package_id": "package_003",
+   "difficulty": 1,
+   "order": 1
+  },
+  {
+   "id": "sentence_000078",
+   "text": "Gyşda daglarda gar köp bolýar.",
+   "language": "tk",
+   "category": "nature",
+   "package_id": "package_003",
+   "difficulty": 1,
+   "order": 2
+  },
+  {
+   "id": "sentence_000079",
+   "text": "Ýaz gelende baglar gülläp başlaýar.",
+   "language": "tk",
+   "category": "nature",
+   "package_id": "package_003",
+   "difficulty": 1,
+   "order": 3
+  },
+  {
+   "id": "sentence_000080",
+   "text": "Gün ýaşyp, asmana ýyldyzlar çykdy.",
+   "language": "tk",
+   "category": "nature",
+   "package_id": "package_003",
+   "difficulty": 1,
+   "order": 4
+  },
+  {
+   "id": "sentence_000081",
+   "text": "Şemal güýçli öwüsýär.",
+   "language": "tk",
+   "category": "nature",
+   "package_id": "package_003",
+   "difficulty": 1,
+   "order": 5
+  },
+  {
+   "id": "sentence_000082",
+   "text": "Günorta gün örän gyzdyryp dur.",
+   "language": "tk",
+   "category": "nature",
+   "package_id": "package_003",
+   "difficulty": 1,
+   "order": 6
+  },
+  {
+   "id": "sentence_000083",
+   "text": "Hazar deňziniň suwy turgenç.",
+   "language": "tk",
+   "category": "nature",
+   "package_id": "package_003",
+   "difficulty": 1,
+   "order": 7
+  },
+  {
+   "id": "sentence_000084",
+   "text": "Daglaryň howasy arassa we salkyn.",
+   "language": "tk",
+   "category": "nature",
+   "package_id": "package_003",
+   "difficulty": 1,
+   "order": 8
+  },
+  {
+   "id": "sentence_000085",
+   "text": "Güýzde ýapraklar sary reňke öwrülýär.",
+   "language": "tk",
+   "category": "nature",
+   "package_id": "package_003",
+   "difficulty": 1,
+   "order": 9
+  },
+  {
+   "id": "sentence_000086",
+   "text": "Ýyldyrym çakyp, ýagyş başlady.",
+   "language": "tk",
+   "category": "nature",
+   "package_id": "package_003",
+   "difficulty": 1,
+   "order": 10
+  },
+  {
+   "id": "sentence_000087",
+   "text": "Bahar paslynda güller açýar.",
+   "language": "tk",
+   "category": "nature",
+   "package_id": "package_003",
+   "difficulty": 1,
+   "order": 11
+  },
+  {
+   "id": "sentence_000088",
+   "text": "Aprel aýynda ýagyşly günler köp bolýar.",
+   "language": "tk",
+   "category": "nature",
+   "package_id": "package_003",
+   "difficulty": 1,
+   "order": 12
+  },
+  {
+   "id": "sentence_000089",
+   "text": "Çölde gündiz yssy, gije sowuk bolýar.",
+   "language": "tk",
+   "category": "nature",
+   "package_id": "package_003",
+   "difficulty": 1,
+   "order": 13
+  },
+  {
+   "id": "sentence_000090",
+   "text": "Gar eräp, derýalar joşýar.",
+   "language": "tk",
+   "category": "nature",
+   "package_id": "package_003",
+   "difficulty": 1,
+   "order": 14
+  },
+  {
+   "id": "sentence_000091",
+   "text": "Bagyň miweleri bu ýyl bol hasyl berdi.",
+   "language": "tk",
+   "category": "nature",
+   "package_id": "package_003",
+   "difficulty": 2,
+   "order": 15
+  },
+  {
+   "id": "sentence_000092",
+   "text": "Derýanyň suwy arassa we sowuk.",
+   "language": "tk",
+   "category": "nature",
+   "package_id": "package_003",
+   "difficulty": 1,
+   "order": 16
+  },
+  {
+   "id": "sentence_000093",
+   "text": "Guşlar gyşlamak üçin ýyly ýurtlara uçýar.",
+   "language": "tk",
+   "category": "nature",
+   "package_id": "package_003",
+   "difficulty": 1,
+   "order": 17
+  },
+  {
+   "id": "sentence_000094",
+   "text": "Tokaýda dürli haýwanlar ýaşaýar.",
+   "language": "tk",
+   "category": "nature",
+   "package_id": "package_003",
+   "difficulty": 1,
+   "order": 18
+  },
+  {
+   "id": "sentence_000095",
+   "text": "Gün doganda oba ýagtylyga çümýär.",
+   "language": "tk",
+   "category": "nature",
+   "package_id": "package_003",
+   "difficulty": 1,
+   "order": 19
+  },
+  {
+   "id": "sentence_000096",
+   "text": "Aý asmanda doly görünýär.",
+   "language": "tk",
+   "category": "nature",
+   "package_id": "package_003",
+   "difficulty": 1,
+   "order": 20
+  },
+  {
+   "id": "sentence_000097",
+   "text": "Ýazky ýagyşlar ekinlere peýdaly.",
+   "language": "tk",
+   "category": "nature",
+   "package_id": "package_003",
+   "difficulty": 1,
+   "order": 21
+  },
+  {
+   "id": "sentence_000098",
+   "text": "Sähra ösümlikleri suwa çydamly.",
+   "language": "tk",
+   "category": "nature",
+   "package_id": "package_003",
+   "difficulty": 1,
+   "order": 22
+  },
+  {
+   "id": "sentence_000099",
+   "text": "Deňiz şemaly ýüzüme öwüsdi.",
+   "language": "tk",
+   "category": "nature",
+   "package_id": "package_003",
+   "difficulty": 1,
+   "order": 23
+  },
+  {
+   "id": "sentence_000100",
+   "text": "Tomusda gün uzyn, gije gysga bolýar.",
+   "language": "tk",
+   "category": "nature",
+   "package_id": "package_003",
+   "difficulty": 1,
+   "order": 24
+  },
+  {
+   "id": "sentence_000101",
+   "text": "Bu ýyl gyş örän sowuk geldi.",
+   "language": "tk",
+   "category": "nature",
+   "package_id": "package_003",
+   "difficulty": 1,
+   "order": 25
+  },
+  {
+   "id": "sentence_000102",
+   "text": "Bulutlar ýygnanyp, howa üýtgedi.",
+   "language": "tk",
+   "category": "nature",
+   "package_id": "package_003",
+   "difficulty": 1,
+   "order": 26
+  },
+  {
+   "id": "sentence_000103",
+   "text": "Ýeriň ysy ýagyşdan soň ýaýraýar.",
+   "language": "tk",
+   "category": "nature",
+   "package_id": "package_003",
+   "difficulty": 1,
+   "order": 27
+  },
+  {
+   "id": "sentence_000104",
+   "text": "Daglaryň üstünde bulutlar süýşýär.",
+   "language": "tk",
+   "category": "nature",
+   "package_id": "package_003",
+   "difficulty": 1,
+   "order": 28
+  },
+  {
+   "id": "sentence_000105",
+   "text": "Ekin meýdanlary ýaşyl reňke beslendi.",
+   "language": "tk",
+   "category": "nature",
+   "package_id": "package_003",
+   "difficulty": 1,
+   "order": 29
+  },
+  {
+   "id": "sentence_000106",
+   "text": "Güneşli günde dynç almak ýakymly.",
+   "language": "tk",
+   "category": "nature",
+   "package_id": "package_003",
+   "difficulty": 1,
+   "order": 30
+  },
+  {
+   "id": "sentence_000107",
+   "text": "Tepegöz guşy asmanda aýlanyp uçýar.",
+   "language": "tk",
+   "category": "nature",
+   "package_id": "package_003",
+   "difficulty": 1,
+   "order": 31
+  },
+  {
+   "id": "sentence_000108",
+   "text": "Bahar ýagşyndan soň howa arassalanýar.",
+   "language": "tk",
+   "category": "nature",
+   "package_id": "package_003",
+   "difficulty": 1,
+   "order": 32
+  },
+  {
+   "id": "sentence_000109",
+   "text": "Suw çeşmeleri oba üçin gymmatly.",
+   "language": "tk",
+   "category": "nature",
+   "package_id": "package_003",
+   "difficulty": 1,
+   "order": 33
+  },
+  {
+   "id": "sentence_000110",
+   "text": "Tebigaty goramak her birimiziň borjumyz.",
+   "language": "tk",
+   "category": "nature",
+   "package_id": "package_003",
+   "difficulty": 1,
+   "order": 34
+  },
+  {
+   "id": "sentence_000111",
+   "text": "Mekdepde okuwçylar iňlis dilini öwrenýärler.",
+   "language": "tk",
+   "category": "education",
+   "package_id": "package_004",
+   "difficulty": 1,
+   "order": 0
+  },
+  {
+   "id": "sentence_000112",
+   "text": "Mugallym bize täze sapak berdi.",
+   "language": "tk",
+   "category": "education",
+   "package_id": "package_004",
+   "difficulty": 1,
+   "order": 1
+  },
+  {
+   "id": "sentence_000113",
+   "text": "Uniwersitetde iki fakultet bar.",
+   "language": "tk",
+   "category": "education",
+   "package_id": "package_004",
+   "difficulty": 1,
+   "order": 2
+  },
+  {
+   "id": "sentence_000114",
+   "text": "Men programmirlemek boýunça okaýaryn.",
+   "language": "tk",
+   "category": "education",
+   "package_id": "package_004",
+   "difficulty": 1,
+   "order": 3
+  },
+  {
+   "id": "sentence_000115",
+   "text": "Iş tapgyrynda möhüm duşuşyk geçirildi.",
+   "language": "tk",
+   "category": "education",
+   "package_id": "package_004",
+   "difficulty": 1,
+   "order": 4
+  },
+  {
+   "id": "sentence_000116",
+   "text": "Täze taslama boýunça teklip taýýarladym.",
+   "language": "tk",
+   "category": "education",
+   "package_id": "package_004",
+   "difficulty": 1,
+   "order": 5
+  },
+  {
+   "id": "sentence_000117",
+   "text": "Mugallym okuwçylara baha goýdy.",
+   "language": "tk",
+   "category": "education",
+   "package_id": "package_004",
+   "difficulty": 1,
+   "order": 6
+  },
+  {
+   "id": "sentence_000118",
+   "text": "Işde düzgün-tertibe boýun bolmaly.",
+   "language": "tk",
+   "category": "education",
+   "package_id": "package_004",
+   "difficulty": 1,
+   "order": 7
+  },
+  {
+   "id": "sentence_000119",
+   "text": "Biz bu meseläni bilelikde çözdük.",
+   "language": "tk",
+   "category": "education",
+   "package_id": "package_004",
+   "difficulty": 1,
+   "order": 8
+  },
+  {
+   "id": "sentence_000120",
+   "text": "Okuw ýyly sentýabrda başlaýar.",
+   "language": "tk",
+   "category": "education",
+   "package_id": "package_004",
+   "difficulty": 1,
+   "order": 9
+  },
+  {
+   "id": "sentence_000121",
+   "text": "Alymlar gadymy golýazmalary tapdylar.",
+   "language": "tk",
+   "category": "education",
+   "package_id": "package_004",
+   "difficulty": 1,
+   "order": 10
+  },
+  {
+   "id": "sentence_000122",
+   "text": "Inžener täze köpriniň dizaýnyny taýýarlady.",
+   "language": "tk",
+   "category": "education",
+   "package_id": "package_004",
+   "difficulty": 1,
+   "order": 11
+  },
+  {
+   "id": "sentence_000123",
+   "text": "Lukmanlar hassananyň işini gowulandyrýarlar.",
+   "language": "tk",
+   "category": "education",
+   "package_id": "package_004",
+   "difficulty": 1,
+   "order": 12
+  },
+  {
+   "id": "sentence_000124",
+   "text": "Barlagyň netijesi bugün yglan edildi.",
+   "language": "tk",
+   "category": "education",
+   "package_id": "package_004",
+   "difficulty": 1,
+   "order": 13
+  },
+  {
+   "id": "sentence_000125",
+   "text": "Kompýuter çalt we ygtybarly işleýär.",
+   "language": "tk",
+   "category": "education",
+   "package_id": "package_004",
+   "difficulty": 1,
+   "order": 14
+  },
+  {
+   "id": "sentence_000126",
+   "text": "Telefonymyň batareýasy gutardy.",
+   "language": "tk",
+   "category": "education",
+   "package_id": "package_004",
+   "difficulty": 1,
+   "order": 15
+  },
+  {
+   "id": "sentence_000127",
+   "text": "Internet baglanyşygy örän wagtlaýyn.",
+   "language": "tk",
+   "category": "education",
+   "package_id": "package_004",
+   "difficulty": 1,
+   "order": 16
+  },
+  {
+   "id": "sentence_000128",
+   "text": "Programma üstünlikli gurnaldy.",
+   "language": "tk",
+   "category": "education",
+   "package_id": "package_004",
+   "difficulty": 1,
+   "order": 17
+  },
+  {
+   "id": "sentence_000129",
+   "text": "Maglumatlaryň ätiýaçlyk nusgasyny saklaň.",
+   "language": "tk",
+   "category": "education",
+   "package_id": "package_004",
+   "difficulty": 1,
+   "order": 18
+  },
+  {
+   "id": "sentence_000130",
+   "text": "Bu saýtda gözleg ulanyp, maglumat tapyp bolýar.",
+   "language": "tk",
+   "category": "education",
+   "package_id": "package_004",
+   "difficulty": 2,
+   "order": 19
+  },
+  {
+   "id": "sentence_000131",
+   "text": "Emeli aň täze mümkinçilikleri açýar.",
+   "language": "tk",
+   "category": "education",
+   "package_id": "package_004",
+   "difficulty": 1,
+   "order": 20
+  },
+  {
+   "id": "sentence_000132",
+   "text": "Ses ýazgy etmek üçin mikrofony ulanýarys.",
+   "language": "tk",
+   "category": "education",
+   "package_id": "package_004",
+   "difficulty": 1,
+   "order": 21
+  },
+  {
+   "id": "sentence_000133",
+   "text": "Faýl awtomatiki ýagdaýda serwere iberilýär.",
+   "language": "tk",
+   "category": "education",
+   "package_id": "package_004",
+   "difficulty": 1,
+   "order": 22
+  },
+  {
+   "id": "sentence_000134",
+   "text": "Programmanyň täze görnüşi çykdy.",
+   "language": "tk",
+   "category": "education",
+   "package_id": "package_004",
+   "difficulty": 1,
+   "order": 23
+  },
+  {
+   "id": "sentence_000135",
+   "text": "Elektrik togy bäş minut ýok boldy.",
+   "language": "tk",
+   "category": "education",
+   "package_id": "package_004",
+   "difficulty": 1,
+   "order": 24
+  },
+  {
+   "id": "sentence_000136",
+   "text": "Ulanyjy täze hasabyny döretdi.",
+   "language": "tk",
+   "category": "education",
+   "package_id": "package_004",
+   "difficulty": 1,
+   "order": 25
+  },
+  {
+   "id": "sentence_000137",
+   "text": "Paroly hiç kime aýtmazlyk gerek.",
+   "language": "tk",
+   "category": "education",
+   "package_id": "package_004",
+   "difficulty": 1,
+   "order": 26
+  },
+  {
+   "id": "sentence_000138",
+   "text": "Programma maglumatlary ýerli saklaýar.",
+   "language": "tk",
+   "category": "education",
+   "package_id": "package_004",
+   "difficulty": 1,
+   "order": 27
+  },
+  {
+   "id": "sentence_000139",
+   "text": "Internet pes bolsa, ýazgy nobatda saklanar.",
+   "language": "tk",
+   "category": "education",
+   "package_id": "package_004",
+   "difficulty": 1,
+   "order": 28
+  },
+  {
+   "id": "sentence_000140",
+   "text": "Biz faýllary bulutly ammarda saklaýarys.",
+   "language": "tk",
+   "category": "education",
+   "package_id": "package_004",
+   "difficulty": 1,
+   "order": 29
+  },
+  {
+   "id": "sentence_000141",
+   "text": "Mugallym sorag berip, jogabyny barlady.",
+   "language": "tk",
+   "category": "education",
+   "package_id": "package_004",
+   "difficulty": 1,
+   "order": 30
+  },
+  {
+   "id": "sentence_000142",
+   "text": "Okuwçylar tejribe işini tamamladylar.",
+   "language": "tk",
+   "category": "education",
+   "package_id": "package_004",
+   "difficulty": 1,
+   "order": 31
+  },
+  {
+   "id": "sentence_000143",
+   "text": "Kitabhanada täze kitaplar goýuldy.",
+   "language": "tk",
+   "category": "education",
+   "package_id": "package_004",
+   "difficulty": 1,
+   "order": 32
+  },
+  {
+   "id": "sentence_000144",
+   "text": "Dil öwrenmek üçin her gün türgenleşmeli.",
+   "language": "tk",
+   "category": "education",
+   "package_id": "package_004",
+   "difficulty": 1,
+   "order": 33
+  },
+  {
+   "id": "sentence_000145",
+   "text": "Ýygnan maglumatlar model öwretmek üçin ulanylýar.",
+   "language": "tk",
+   "category": "education",
+   "package_id": "package_004",
+   "difficulty": 1,
+   "order": 34
+  },
+  {
+   "id": "sentence_000146",
+   "text": "Sen nirede ýaşaýarsyň?",
+   "language": "tk",
+   "category": "questions",
+   "package_id": "package_005",
+   "difficulty": 1,
+   "order": 0
+  },
+  {
+   "id": "sentence_000147",
+   "text": "Bu gün howa nähili bolýar?",
+   "language": "tk",
+   "category": "questions",
+   "package_id": "package_005",
+   "difficulty": 1,
+   "order": 1
+  },
+  {
+   "id": "sentence_000148",
+   "text": "Bize haçan geljek?",
+   "language": "tk",
+   "category": "questions",
+   "package_id": "package_005",
+   "difficulty": 1,
+   "order": 2
+  },
+  {
+   "id": "sentence_000149",
+   "text": "Näme üçin jaň etmediň?",
+   "language": "tk",
+   "category": "questions",
+   "package_id": "package_005",
+   "difficulty": 1,
+   "order": 3
+  },
+  {
+   "id": "sentence_000150",
+   "text": "Siz türkmençe gepleýärsiňizmi?",
+   "language": "tk",
+   "category": "questions",
+   "package_id": "package_005",
+   "difficulty": 1,
+   "order": 4
+  },
+  {
+   "id": "sentence_000151",
+   "text": "Meniň bilen gitmek isleýärsiňmi?",
+   "language": "tk",
+   "category": "questions",
+   "package_id": "package_005",
+   "difficulty": 1,
+   "order": 5
+  },
+  {
+   "id": "sentence_000152",
+   "text": "Awtobus haçan ýola düşýär?",
+   "language": "tk",
+   "category": "questions",
+   "package_id": "package_005",
+   "difficulty": 1,
+   "order": 6
+  },
+  {
+   "id": "sentence_000153",
+   "text": "Näçe sagat wagt gerek?",
+   "language": "tk",
+   "category": "questions",
+   "package_id": "package_005",
+   "difficulty": 1,
+   "order": 7
+  },
+  {
+   "id": "sentence_000154",
+   "text": "Siz bu kitaby okadyňyzmy?",
+   "language": "tk",
+   "category": "questions",
+   "package_id": "package_005",
+   "difficulty": 1,
+   "order": 8
+  },
+  {
+   "id": "sentence_000155",
+   "text": "Bilermenlere ýüz tutmalymy?",
+   "language": "tk",
+   "category": "questions",
+   "package_id": "package_005",
+   "difficulty": 1,
+   "order": 9
+  },
+  {
+   "id": "sentence_000156",
+   "text": "Çaýyňyza süýt goşýarysmy?",
+   "language": "tk",
+   "category": "questions",
+   "package_id": "package_005",
+   "difficulty": 1,
+   "order": 10
+  },
+  {
+   "id": "sentence_000157",
+   "text": "Haýsy ýol has gysga bolýar?",
+   "language": "tk",
+   "category": "questions",
+   "package_id": "package_005",
+   "difficulty": 1,
+   "order": 11
+  },
+  {
+   "id": "sentence_000158",
+   "text": "Seniň işiň nähili geçýär?",
+   "language": "tk",
+   "category": "questions",
+   "package_id": "package_005",
+   "difficulty": 1,
+   "order": 12
+  },
+  {
+   "id": "sentence_000159",
+   "text": "Şu gün bize näme etmeli?",
+   "language": "tk",
+   "category": "questions",
+   "package_id": "package_005",
+   "difficulty": 1,
+   "order": 13
+  },
+  {
+   "id": "sentence_000160",
+   "text": "Bu sözlemi dogry okap bilýärsiňizmi?",
+   "language": "tk",
+   "category": "questions",
+   "package_id": "package_005",
+   "difficulty": 1,
+   "order": 14
+  },
+  {
+   "id": "sentence_000161",
+   "text": "Näçe sany ýazgy taýýarladyňyz?",
+   "language": "tk",
+   "category": "questions",
+   "package_id": "package_005",
+   "difficulty": 1,
+   "order": 15
+  },
+  {
+   "id": "sentence_000162",
+   "text": "Siz nähili dilleri bilýärsiňiz?",
+   "language": "tk",
+   "category": "questions",
+   "package_id": "package_005",
+   "difficulty": 1,
+   "order": 16
+  },
+  {
+   "id": "sentence_000163",
+   "text": "Meniň sesim aýdyň eşidilýärmi?",
+   "language": "tk",
+   "category": "questions",
+   "package_id": "package_005",
+   "difficulty": 1,
+   "order": 17
+  },
+  {
+   "id": "sentence_000164",
+   "text": "Taýýarmy, başlalyňmy?",
+   "language": "tk",
+   "category": "questions",
+   "package_id": "package_005",
+   "difficulty": 1,
+   "order": 18
+  },
+  {
+   "id": "sentence_000165",
+   "text": "Galaýy bu ýerde arzanmy?",
+   "language": "tk",
+   "category": "questions",
+   "package_id": "package_005",
+   "difficulty": 1,
+   "order": 19
+  },
+  {
+   "id": "sentence_000166",
+   "text": "Men nädip kömek edip bilerin?",
+   "language": "tk",
+   "category": "questions",
+   "package_id": "package_005",
+   "difficulty": 1,
+   "order": 20
+  },
+  {
+   "id": "sentence_000167",
+   "text": "Şu wagt elýeterlimi?",
+   "language": "tk",
+   "category": "questions",
+   "package_id": "package_005",
+   "difficulty": 1,
+   "order": 21
+  },
+  {
+   "id": "sentence_000168",
+   "text": "Duşuşygy ertire geçirsek bolarmy?",
+   "language": "tk",
+   "category": "questions",
+   "package_id": "package_005",
+   "difficulty": 1,
+   "order": 22
+  },
+  {
+   "id": "sentence_000169",
+   "text": "Bu ýazgyny täzeden diňläp göreliňmi?",
+   "language": "tk",
+   "category": "questions",
+   "package_id": "package_005",
+   "difficulty": 1,
+   "order": 23
+  },
+  {
+   "id": "sentence_000170",
+   "text": "Seniň pikiriňçe haýsysy has gowy?",
+   "language": "tk",
+   "category": "questions",
+   "package_id": "package_005",
+   "difficulty": 1,
+   "order": 24
+  },
+  {
+   "id": "sentence_000171",
+   "text": "Biletleri onlaýn almalymy?",
+   "language": "tk",
+   "category": "questions",
+   "package_id": "package_005",
+   "difficulty": 1,
+   "order": 25
+  },
+  {
+   "id": "sentence_000172",
+   "text": "Öýde kim bar?",
+   "language": "tk",
+   "category": "questions",
+   "package_id": "package_005",
+   "difficulty": 1,
+   "order": 26
+  },
+  {
+   "id": "sentence_000173",
+   "text": "Şu telefony nireden aldyn?",
+   "language": "tk",
+   "category": "questions",
+   "package_id": "package_005",
+   "difficulty": 1,
+   "order": 27
+  },
+  {
+   "id": "sentence_000174",
+   "text": "Bize náhili maslahat berersiňiz?",
+   "language": "tk",
+   "category": "questions",
+   "package_id": "package_005",
+   "difficulty": 1,
+   "order": 28
+  },
+  {
+   "id": "sentence_000175",
+   "text": "Lukmana haçan ýazylmaly?",
+   "language": "tk",
+   "category": "questions",
+   "package_id": "package_005",
+   "difficulty": 1,
+   "order": 29
+  },
+  {
+   "id": "sentence_000176",
+   "text": "Meni diňleýärsiňizmi?",
+   "language": "tk",
+   "category": "questions",
+   "package_id": "package_005",
+   "difficulty": 1,
+   "order": 30
+  },
+  {
+   "id": "sentence_000177",
+   "text": "Bu ýerde dükan barmy?",
+   "language": "tk",
+   "category": "questions",
+   "package_id": "package_005",
+   "difficulty": 1,
+   "order": 31
+  },
+  {
+   "id": "sentence_000178",
+   "text": "Hany, ýene bir gezek gaýtala?",
+   "language": "tk",
+   "category": "questions",
+   "package_id": "package_005",
+   "difficulty": 1,
+   "order": 32
+  },
+  {
+   "id": "sentence_000179",
+   "text": "Wagtyň bar bolsa, biraz gepleşeliň.",
+   "language": "tk",
+   "category": "questions",
+   "package_id": "package_005",
+   "difficulty": 1,
+   "order": 33
+  },
+  {
+   "id": "sentence_000180",
+   "text": "Siz nähili pikir edýärsiňiz?",
+   "language": "tk",
+   "category": "questions",
+   "package_id": "package_005",
+   "difficulty": 1,
+   "order": 34
+  },
+  {
+   "id": "sentence_000181",
+   "text": "Aşgabat şäheriň köçeleri giň we arassa.",
+   "language": "tk",
+   "category": "culture",
+   "package_id": "package_006",
+   "difficulty": 1,
+   "order": 0
+  },
+  {
+   "id": "sentence_000182",
+   "text": "Mary welaýaty gadymy taryhy bilen tanalýar.",
+   "language": "tk",
+   "category": "culture",
+   "package_id": "package_006",
+   "difficulty": 1,
+   "order": 1
+  },
+  {
+   "id": "sentence_000183",
+   "text": "Türkmenabat şäheri Amyderýanyň boýunda ýerleşýär.",
+   "language": "tk",
+   "category": "culture",
+   "package_id": "package_006",
+   "difficulty": 1,
+   "order": 2
+  },
+  {
+   "id": "sentence_000184",
+   "text": "Daşoguz welaýaty demirgazykda ýerleşýär.",
+   "language": "tk",
+   "category": "culture",
+   "package_id": "package_006",
+   "difficulty": 1,
+   "order": 3
+  },
+  {
+   "id": "sentence_000185",
+   "text": "Balkanabat şäherinde köp senagat kärhanasy bar.",
+   "language": "tk",
+   "category": "culture",
+   "package_id": "package_006",
+   "difficulty": 1,
+   "order": 4
+  },
+  {
+   "id": "sentence_000186",
+   "text": "Hazar deňzi Türkmenistanyň günbatar serhedinde.",
+   "language": "tk",
+   "category": "culture",
+   "package_id": "package_006",
+   "difficulty": 1,
+   "order": 5
+  },
+  {
+   "id": "sentence_000187",
+   "text": "Köpetdagyň eteklerinde obalar köp.",
+   "language": "tk",
+   "category": "culture",
+   "package_id": "package_006",
+   "difficulty": 1,
+   "order": 6
+  },
+  {
+   "id": "sentence_000188",
+   "text": "Merviň harabalyklary dünýä mirasyna girýär.",
+   "language": "tk",
+   "category": "culture",
+   "package_id": "package_006",
+   "difficulty": 1,
+   "order": 7
+  },
+  {
+   "id": "sentence_000189",
+   "text": "Türkmen elipbiýinde otuz harf bar.",
+   "language": "tk",
+   "category": "culture",
+   "package_id": "package_006",
+   "difficulty": 1,
+   "order": 8
+  },
+  {
+   "id": "sentence_000190",
+   "text": "Türkmen dili biziň medeni mirasymyzdyr.",
+   "language": "tk",
+   "category": "culture",
+   "package_id": "package_006",
+   "difficulty": 1,
+   "order": 9
+  },
+  {
+   "id": "sentence_000191",
+   "text": "Türkmen halysy dünýäde meşhurdyr.",
+   "language": "tk",
+   "category": "culture",
+   "package_id": "package_006",
+   "difficulty": 1,
+   "order": 10
+  },
+  {
+   "id": "sentence_000192",
+   "text": "Ahalteke atlary çalt çapýarlar.",
+   "language": "tk",
+   "category": "culture",
+   "package_id": "package_006",
+   "difficulty": 1,
+   "order": 11
+  },
+  {
+   "id": "sentence_000193",
+   "text": "Nowruz baýramy bahar paslynda bellenilýär.",
+   "language": "tk",
+   "category": "culture",
+   "package_id": "package_006",
+   "difficulty": 1,
+   "order": 12
+  },
+  {
+   "id": "sentence_000194",
+   "text": "Bagşy dutar çalyp, aýdym aýdýar.",
+   "language": "tk",
+   "category": "culture",
+   "package_id": "package_006",
+   "difficulty": 1,
+   "order": 13
+  },
+  {
+   "id": "sentence_000195",
+   "text": "Çagalar dutar öwrenmegi halaýarlar.",
+   "language": "tk",
+   "category": "culture",
+   "package_id": "package_006",
+   "difficulty": 1,
+   "order": 14
+  },
+  {
+   "id": "sentence_000196",
+   "text": "Gadymy golýazmalar muzeýde saklanýar.",
+   "language": "tk",
+   "category": "culture",
+   "package_id": "package_006",
+   "difficulty": 1,
+   "order": 15
+  },
+  {
+   "id": "sentence_000197",
+   "text": "Türkmen milli lybasy nepis nagyşlar bilen bezelýär.",
+   "language": "tk",
+   "category": "culture",
+   "package_id": "package_006",
+   "difficulty": 2,
+   "order": 16
+  },
+  {
+   "id": "sentence_000198",
+   "text": "Milli tagamlar myhmanlara hödürlenýär.",
+   "language": "tk",
+   "category": "culture",
+   "package_id": "package_006",
+   "difficulty": 1,
+   "order": 17
+  },
+  {
+   "id": "sentence_000199",
+   "text": "Garagum çöli özüniň gözelligi bilen tanalýar.",
+   "language": "tk",
+   "category": "culture",
+   "package_id": "package_006",
+   "difficulty": 1,
+   "order": 18
+  },
+  {
+   "id": "sentence_000200",
+   "text": "Atçylyk sporty ýurdumyzda ösen.",
+   "language": "tk",
+   "category": "culture",
+   "package_id": "package_006",
+   "difficulty": 1,
+   "order": 19
+  },
+  {
+   "id": "sentence_000201",
+   "text": "Küşt oýny çylşyrymly pikirlenmegi öwredýär.",
+   "language": "tk",
+   "category": "culture",
+   "package_id": "package_006",
+   "difficulty": 1,
+   "order": 20
+  },
+  {
+   "id": "sentence_000202",
+   "text": "Milli aýdym-saz mirasymyz nesilden-nesle geçýär.",
+   "language": "tk",
+   "category": "culture",
+   "package_id": "package_006",
+   "difficulty": 1,
+   "order": 21
+  },
+  {
+   "id": "sentence_000203",
+   "text": "Türkmenistanda dört pasyl aýdyň duýulýar.",
+   "language": "tk",
+   "category": "culture",
+   "package_id": "package_006",
+   "difficulty": 1,
+   "order": 22
+  },
+  {
+   "id": "sentence_000204",
+   "text": "Awtoulag ýollary ýurdumyzyň şäherlerini baglanyşdyrýar.",
+   "language": "tk",
+   "category": "culture",
+   "package_id": "package_006",
+   "difficulty": 1,
+   "order": 23
+  },
+  {
+   "id": "sentence_000205",
+   "text": "Ýurdumyzyň tebigy baýlyklary köpdür.",
+   "language": "tk",
+   "category": "culture",
+   "package_id": "package_006",
+   "difficulty": 1,
+   "order": 24
+  },
+  {
+   "id": "sentence_000206",
+   "text": "Täze binalar şäherleriň keşbini üýtgedýär.",
+   "language": "tk",
+   "category": "culture",
+   "package_id": "package_006",
+   "difficulty": 1,
+   "order": 25
+  },
+  {
+   "id": "sentence_000207",
+   "text": "Döwlet taryhy ýadygärlikleri goraýar.",
+   "language": "tk",
+   "category": "culture",
+   "package_id": "package_006",
+   "difficulty": 1,
+   "order": 26
+  },
+  {
+   "id": "sentence_000208",
+   "text": "Köne şäherleriň harabalary arheologlar üçin gymmatly.",
+   "language": "tk",
+   "category": "culture",
+   "package_id": "package_006",
+   "difficulty": 1,
+   "order": 27
+  },
+  {
+   "id": "sentence_000209",
+   "text": "Nusay ýazgylary gadymy döwürden habar berýär.",
+   "language": "tk",
+   "category": "culture",
+   "package_id": "package_006",
+   "difficulty": 1,
+   "order": 28
+  },
+  {
+   "id": "sentence_000210",
+   "text": "Jemgyýetde hormat we mähir möhümdir.",
+   "language": "tk",
+   "category": "culture",
+   "package_id": "package_006",
+   "difficulty": 1,
+   "order": 29
+  },
+  {
+   "id": "sentence_000211",
+   "text": "Umuman, dilimiz edebiýatymyzyň gözbasydyr.",
+   "language": "tk",
+   "category": "culture",
+   "package_id": "package_006",
+   "difficulty": 1,
+   "order": 30
+  },
+  {
+   "id": "sentence_000212",
+   "text": "Her halk öz taryhyny bilmeli.",
+   "language": "tk",
+   "category": "culture",
+   "package_id": "package_006",
+   "difficulty": 1,
+   "order": 31
+  },
+  {
+   "id": "sentence_000213",
+   "text": "Ýaşlar milli däp-dessurlary öwrenýärler.",
+   "language": "tk",
+   "category": "culture",
+   "package_id": "package_006",
+   "difficulty": 1,
+   "order": 32
+  },
+  {
+   "id": "sentence_000214",
+   "text": "Sungat adam ruhuny baýlaşdyrýar.",
+   "language": "tk",
+   "category": "culture",
+   "package_id": "package_006",
+   "difficulty": 1,
+   "order": 33
+  },
+  {
+   "id": "sentence_000215",
+   "text": "Berkarar döwlet gurmak umumy maksatdyr.",
+   "language": "tk",
+   "category": "culture",
+   "package_id": "package_006",
+   "difficulty": 1,
+   "order": 34
+  }
+ ]
+}
