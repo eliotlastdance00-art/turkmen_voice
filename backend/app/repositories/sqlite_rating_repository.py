@@ -70,11 +70,22 @@ class SqliteRatingRepository:
     def top_raters(self, limit: int = 20) -> list[dict]:
         with connection() as db:
             rows = db.execute(
-                """SELECT user_id, COUNT(*) AS ratings, AVG(score) AS average_score
-                   FROM ratings GROUP BY user_id ORDER BY ratings DESC LIMIT ?""",
+                """SELECT g.user_id,
+                          COALESCE(u.display_name, 'Anonim') AS display_name,
+                          COUNT(*) AS ratings,
+                          AVG(g.score) AS average_score,
+                          SUM(CASE WHEN g.matches_text = 0 THEN 1 ELSE 0 END) AS mismatch_reports
+                   FROM ratings g LEFT JOIN users u ON u.id = g.user_id
+                   GROUP BY g.user_id ORDER BY ratings DESC LIMIT ?""",
                 (limit,),
             ).fetchall()
-        return [dict(row) for row in rows]
+        out = []
+        for row in rows:
+            item = dict(row)
+            item["ratings_given"] = int(item.pop("ratings"))
+            item["average_score"] = round(item["average_score"], 2) if item.get("average_score") else None
+            out.append(item)
+        return out
 
     @staticmethod
     def _map(row) -> Rating:

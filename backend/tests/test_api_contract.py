@@ -350,7 +350,16 @@ def test_admin_review_and_delete(client, admin_headers, demo_audio):
     take = upload(client, speaker["headers"], demo_audio["wav"]).json()
 
     pending = client.get("/api/v1/admin/recordings", params={"status": "pending"}, headers=admin_headers).json()
-    assert any(item["id"] == take["id"] for item in pending)
+    assert pending["total"] >= 1
+    row = next(item for item in pending["items"] if item["id"] == take["id"])
+    assert row["status"] == "pending"
+    assert row["min_ratings"] >= 1
+    assert isinstance(row["labels"], list)
+    assert row["display_name"] == "Barlag gerek"
+    assert row["duration_ms"] >= 400
+
+    top = client.get("/api/v1/admin/recordings", params={"sort": "top", "limit": 5}, headers=admin_headers).json()
+    assert len(top["items"]) <= 5
 
     reviewed = client.post(
         f"/api/v1/admin/recordings/{take['id']}/review",

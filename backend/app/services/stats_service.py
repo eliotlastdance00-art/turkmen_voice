@@ -53,7 +53,25 @@ class StatsService:
 
     def admin_overview(self) -> dict:
         overview = self.overview()
-        overview["by_speaker"] = self.recordings.by_speaker()[:20]
-        overview["top_raters"] = self.ratings.top_raters(limit=10)
-        overview["levels"] = self.users.levels()
+        health = self.recordings.community_health()
+        moderators = self.ratings.top_raters(limit=12)
+        target_seconds = int(float(overview.get("target_hours") or 10) * 3600)
+        overview.update(
+            {
+                # the dashboard speaks in the same units as the mobile app
+                "total_seconds": overview["seconds_total"],
+                "target_seconds": target_seconds,
+                "pending_recordings": overview["pending"],
+                "approved_recordings": overview["approved"],
+                "healthy_recordings": int(health.get("healthy") or 0),
+                "consensus_recordings": int(health.get("consensus") or 0),
+                "disputed_recordings": int(health.get("disputed") or 0),
+                "rater_seconds": round(int(health.get("listened_ms") or 0) / 1000, 1),
+                "moderators": moderators,
+                "daily_target_seconds": 300,
+                "by_speaker": self.recordings.by_speaker()[:20],
+                "top_raters": moderators,
+                "levels": self.users.levels(),
+            }
+        )
         return overview

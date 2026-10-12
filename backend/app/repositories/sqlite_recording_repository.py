@@ -92,6 +92,88 @@ class SqliteRecordingRepository:
             rows = db.execute(sql, tuple(params)).fetchall()
         return [self._map(row) for row in rows]
 
+    # ------------------------------------------------------------------ admin
+    ADMIN_SORTS = {
+        "recent": "r.created_at DESC",
+        "oldest": "r.created_at ASC",
+        "top": "COALESCE(r.community_score, 0) DESC, r.rating_count DESC",
+        "worst": "COALESCE(r.community_score, 9) ASC, r.rating_count DESC",
+        "disputed": "r.report_count DESC, r.created_at DESC",
+        "random": "RANDOM()",
+        "longest": "r.duration_ms DESC",
+        "shortest": "r.duration_ms ASC",
+    }
+
+    def _admin_where(self, status: RecordingStatus | None, query: str | None) -> tuple[str, list[Any]]:
+        clauses: list[str] = []
+        params: list[Any] = []
+        if status is not None:
+            clauses.append("r.status = ?")
+            params.append(status.value)
+        if query:
+            like = f"%{query}%"
+            clauses.append(
+                "(r.text LIKE ? OR r.normalized_text LIKE ? OR r.id LIKE ?"
+                " OR r.sentence_id LIKE ? OR u.display_name LIKE ? OR r.device_id LIKE ?)"
+            )
+            params.extend([like] * 6)
+        return (" WHERE " + " AND ".join(clauses)) if clauses else "", params
+
+    def admin_list(
+        self,
+        status: RecordingStatus | None = None,
+        query: str | None = None,
+        sort: str = "recent",
+        limit: int = 50,
+        offset: int = 0,
+    ) -> list[dict]:
+        """Admin table rows: recording + speaker + community signals."""
+        where, params = self._admin_where(status, query)
+        order = self.ADMIN_SORTS.get(sort, self.ADMIN_SORTS["recent"])
+        sql = f"""
+            SELECT r.id, r.sentence_id, r.user_id, r.device_id, r.text, r.normalized_text,
+                   r.category, r.package_id, r.duration_ms, r.sample_rate, r.channels,
+                   r.bits_per_sample, r.size_bytes, r.sha256, r.status, r.created_at,
+                   r.reviewed_at, r.rejection_reason, r.community_score, r.rating_count,
+                   r.verified, r.report_count, r.consent_type,
+                   u.display_name AS display_name, u.points AS speaker_points,
+                   (SELECT MAX(g.created_at) FROM ratings g WHERE g.recording_id = r.id) AS rated_at,
+                   (SELECT COUNT(*) FROM ratings g2 WHERE g2.recording_id = r.id AND g2.matches_text = 0) AS mismatch_count,
+                   (SELECT COUNT(*) FROM recordings d WHERE d.sha256 = r.sha256 AND d.sha256 != ''
+                        AND d.id != r.id) AS duplicate_count
+            FROM recordings r
+            LEFT JOIN users u ON u.id = r.user_id
+            {where}
+            ORDER BY {order}
+            LIMIT ? OFFSET ?
+        """
+        with connection() as db:
+            rows = db.execute(sql, tuple(params + [max(1, min(limit, 500)), max(0, offset)])).fetchall()
+        return [dict(row) for row in rows]
+
+    def admin_count(self, status: RecordingStatus | None = None, query: str | None = None) -> int:
+        where, params = self._admin_where(status, query)
+        sql = f"SELECT COUNT(*) AS total FROM recordings r LEFT JOIN users u ON u.id = r.user_id {where}"
+        with connection() as db:
+            row = db.execute(sql, tuple(params)).fetchone()
+        return int(row["total"]) if row else 0
+
+    def community_health(self) -> dict:
+        """Aggregate signals used by the admin dashboard and the dataset report."""
+        with connection() as db:
+            row = db.execute(
+                """SELECT
+                     SUM(CASE WHEN status = 'approved' AND rating_count > 0
+                              AND COALESCE(community_score, 0) >= 4.0 THEN 1 ELSE 0 END) AS healthy,
+                     SUM(CASE WHEN rating_count > 0 THEN 1 ELSE 0 END) AS rated,
+                     SUM(CASE WHEN status = 'approved' AND rating_count >= 3 THEN 1 ELSE 0 END) AS consensus,
+                     COALESCE(SUM(CASE WHEN rating_count > 0 THEN duration_ms ELSE 0 END), 0) AS listened_ms,
+                     SUM(CASE WHEN report_count > 0 THEN 1 ELSE 0 END) AS disputed,
+                     SUM(CASE WHEN rating_count = 0 AND status = 'pending' THEN 1 ELSE 0 END) AS waiting
+                   FROM recordings"""
+            ).fetchone()
+        return dict(row) if row else {}
+
     def next_for_rating(self, user_id: str, limit: int = 5) -> list[Recording]:
         """Recordings from *other* speakers that this user has not rated yet.
 
