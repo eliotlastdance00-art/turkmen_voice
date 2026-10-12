@@ -23,16 +23,48 @@ jobs:
       # and the cleartext network config for local testing), so no
       # `flutter create` / manifest-patching step is needed.
       - name: Install dependencies
-        run: flutter pub get
+        run: |
+          set +e
+          flutter pub get > /tmp/pub.log 2>&1
+          status=$?
+          cat /tmp/pub.log
+          if [ $status -ne 0 ]; then
+            tail -8 /tmp/pub.log | while IFS= read -r line; do echo "::error title=pub-get::$line"; done
+          fi
+          exit $status
 
       - name: Generate Drift code
-        run: dart run build_runner build --delete-conflicting-outputs
+        run: |
+          set +e
+          dart run build_runner build --delete-conflicting-outputs > /tmp/br.log 2>&1
+          status=$?
+          tail -25 /tmp/br.log
+          if [ $status -ne 0 ]; then
+            grep -iE "error|severe" /tmp/br.log | tail -8 | while IFS= read -r line; do echo "::error title=build-runner::$line"; done
+          fi
+          exit $status
 
       - name: Analyze
-        run: flutter analyze
+        run: |
+          set +e
+          flutter analyze > /tmp/analyze.log 2>&1
+          status=$?
+          tail -40 /tmp/analyze.log
+          if [ $status -ne 0 ]; then
+            grep -E "•|error|warning|info" /tmp/analyze.log | tail -8 | while IFS= read -r line; do echo "::error title=flutter-analyze::$line"; done
+          fi
+          exit $status
 
       - name: Widget tests
-        run: flutter test
+        run: |
+          set +e
+          flutter test > /tmp/test.log 2>&1
+          status=$?
+          tail -30 /tmp/test.log
+          if [ $status -ne 0 ]; then
+            grep -iE "error|failed|expected|actual" /tmp/test.log | tail -8 | while IFS= read -r line; do echo "::error title=flutter-test::$line"; done
+          fi
+          exit $status
 
       - name: Resolve API base url
         run: |
@@ -44,7 +76,15 @@ jobs:
           fi
 
       - name: Build debug APK
-        run: flutter build apk --debug --dart-define=API_BASE_URL=$API_BASE_URL
+        run: |
+          set +e
+          flutter build apk --debug --dart-define=API_BASE_URL=$API_BASE_URL > /tmp/apk.log 2>&1
+          status=$?
+          tail -30 /tmp/apk.log
+          if [ $status -ne 0 ]; then
+            grep -iE "error|FAILURE|Exception|not found" /tmp/apk.log | tail -8 | while IFS= read -r line; do echo "::error title=apk-build::$line"; done
+          fi
+          exit $status
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
