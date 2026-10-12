@@ -18,8 +18,8 @@ jobs:
           channel: stable
           cache: true
 
-      # android/ is committed to the repo (with RECORD_AUDIO + INTERNET
-      # permissions in app/src/main/AndroidManifest.xml), so no
+      # android/ is committed to the repo (RECORD_AUDIO + INTERNET permissions
+      # and the cleartext network config for local testing), so no
       # `flutter create` / manifest-patching step is needed.
       - name: Install dependencies
         run: flutter pub get
@@ -30,8 +30,20 @@ jobs:
       - name: Analyze
         run: flutter analyze
 
+      - name: Widget tests
+        run: flutter test
+
+      - name: Resolve API base url
+        run: |
+          # Repository variable API_BASE_URL ýok bolsa, emulyator salgysy ulanylýar.
+          if [ -z "${{ vars.API_BASE_URL }}" ]; then
+            echo "API_BASE_URL=http://10.0.2.2:8000/api/v1" >> "$GITHUB_ENV"
+          else
+            echo "API_BASE_URL=${{ vars.API_BASE_URL }}" >> "$GITHUB_ENV"
+          fi
+
       - name: Build debug APK
-        run: flutter build apk --debug --dart-define=API_BASE_URL=${{ vars.API_BASE_URL }}
+        run: flutter build apk --debug --dart-define=API_BASE_URL=$API_BASE_URL
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4

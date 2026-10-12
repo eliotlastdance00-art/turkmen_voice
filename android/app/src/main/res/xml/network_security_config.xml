@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Beta test üçin: lokal/emulyator serwerine (http) baglanmaga rugsat berýär,
+  sebäbi köp synagçy öz kompýuterinde API işledýär.
+
+  Production-a çykarmazdan öň: cleartextTrafficPermitted="false" ediň we diňe
+  HTTPS domeniňizi goşuň (mysal: <domain>api.turkmen-ses.tm</domain>).
+-->
+<network-security-config>
+    <base-config cleartextTrafficPermitted="true" />
+</network-security-config>

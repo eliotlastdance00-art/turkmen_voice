@@ -54,3 +54,10 @@ __pycache__/
 
 # Legacy
 .packages
+
+# Backend runtime data (sqlite + audio) — mount a volume instead of committing
+backend/app/data/
+backend/.cache/
+backend/exports/
+exports/
+*.whl
