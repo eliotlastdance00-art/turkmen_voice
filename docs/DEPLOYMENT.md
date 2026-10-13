@@ -138,6 +138,10 @@ Bellikler:
 - `API_BASE_URL` goýulmadyk bolsa debug APK emulyator salgysyna
   (`http://10.0.2.2:8000/api/v1`) birikdirilýär we logda `::warning` görünýär;
   **release** APK bolsa ýalňyşlyk bilen saklanýar (boş salgy bilen ýaýratmazlyk üçin).
+- **Ätiýaçlyk (programmada)**: `lib/core/config/app_config.dart` — `--dart-define`
+  berilmedik/boş bolsa release gurluşygy awtomatik `AppConfig.cloudApiBaseUrl`
+  (şu serwer) salgysyna düşýär, debug bolsa emulyatora. Şeýlelikde ýalňyş gurlan
+  APK-da telefon «Serwer elýeterli däl» diýip galman, dogry serwere baglanýar.
 - `workflow_dispatch` diňe iş tertibi (`workflow` faýly) `main`-da bar bolsa işleýär —
   täze workflow üýtgeşmesi `main`-a merge bolmanka «Run workflow» düwmesi görünmez.
 - Wersiýa belgisi: `pubspec.yaml` (`version: 0.3.0+3`) — täze APK her gezek

@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart' show kReleaseMode;
+
 /// Global, build-time configuration.
 ///
 /// `API_BASE_URL` is injected with `--dart-define` (the GitHub Actions
@@ -5,10 +7,29 @@
 class AppConfig {
   const AppConfig._();
 
-  static const String apiBaseUrl = String.fromEnvironment(
-    'API_BASE_URL',
-    defaultValue: 'http://10.0.2.2:8000/api/v1',
-  );
+  /// `--dart-define=API_BASE_URL=...` bilen berilýän salgy.
+  static const String _envApiBaseUrl = String.fromEnvironment('API_BASE_URL');
+
+  /// Ýerli işlediş (emulyator/desktop) üçin serwer.
+  static const String emulatorApiBaseUrl = 'http://10.0.2.2:8000/api/v1';
+
+  /// Çykarylan (deployed) serwer — beta we täjirçilik üçin.
+  static const String cloudApiBaseUrl =
+      'https://turkmen-voice-09885e66.fastapicloud.dev/api/v1';
+
+  /// Işleýän API salgysy.
+  ///
+  /// `--dart-define=API_BASE_URL=...` berlen bolsa — şol ulanylýar. Berilmedik
+  /// ýa-da **boş** bolsa: release gurluşyklary çykarylan serwere, debug/profile
+  /// emulyatora düşýär. Şeýlelikde variable ýalňyş goýulyp gurlan release APK
+  /// hem boş salgy bilen işlemezden galmaýar.
+  static String get apiBaseUrl {
+    final String defined = _envApiBaseUrl.trim();
+    if (defined.isNotEmpty) {
+      return defined;
+    }
+    return kReleaseMode ? cloudApiBaseUrl : emulatorApiBaseUrl;
+  }
 
   static const String appName = 'Türkmen Ses';
   static const String appVersion = '0.3.0';
