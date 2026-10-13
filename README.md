@@ -61,6 +61,10 @@ flutter run --dart-define=API_BASE_URL=http://192.168.1.50:8000/api/v1
 APK: **Actions → Build Android APK** (repo variable `API_BASE_URL` goýuň) ýa-da
 `flutter build apk --release --dart-define=API_BASE_URL=...`.
 
+> 🔁 **Deploy-dan soň APK hökman täzeden gurulmaly** — serwer salgysy APK-nyň
+> içine gurulýar. Ädimme-ädim: `docs/DEPLOYMENT.md`, **3.1 bölüm** (`API_BASE_URL`
+> = `https://turkmen-voice-09885e66.fastapicloud.dev/api/v1` → Actions → Run workflow).
+
 ### 3. Serwere çykarmak (FastAPI Cloud)
 
 ```bash

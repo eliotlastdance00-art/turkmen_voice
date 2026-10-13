@@ -11,7 +11,7 @@ class AppConfig {
   );
 
   static const String appName = 'Türkmen Ses';
-  static const String appVersion = '0.2.0';
+  static const String appVersion = '0.3.0';
 
   /// Serwer `audio_url` üçin otnositel ýol gaýtaryp bilýär
   /// (`/api/v1/recordings/<id>/audio`). Şeýle halda ony API-niň öý eýesine

@@ -18,7 +18,9 @@ Galan işler dashboard-da:
 Jikme-jik ädimme-ädim: `DEPLOYMENT.md`.
 
 Soňra:
-- APK üçin `API_BASE_URL` repository variable goýuň → APK şol serwere birikdirilip gurulýar.
+- APK üçin `API_BASE_URL` repository variable goýuň → APK şol serwere birikdirilip gurulýar
+  (ädimler: `DEPLOYMENT.md`, **3.1 bölüm** — debug APK boş goýsa emulyator salgysyna düşýär,
+  release APK bolsa ýalňyşlyk berýär).
 - ⚠️ FastAPI Cloud-yň diski wagtlaýyn — 4-nji bölümi (Infrastruktura) öňünden meýilleşdiriň.
 
 ### 1.2. Demo maglumat bilen synag

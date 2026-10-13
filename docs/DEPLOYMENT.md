@@ -118,6 +118,34 @@ APK üçin: GitHub → **Settings → Secrets and variables → Actions → Vari
 `API_BASE_URL = https://turkmen-voice-09885e66.fastapicloud.dev/api/v1`.
 Soňra *Actions → Build Android APK*.
 
+### 3.1. APK-y täzeden gurmak (deploy-dan soň hökman)
+
+Backend adresi APK-nyň **içine gurulýar** (`--dart-define=API_BASE_URL=...`,
+`lib/core/config/app_config.dart`). Şonuň üçin deploy-dan soň APK täzeden
+gurulmaly — köne APK-da köne salgy galýar.
+
+| Ädim | Nirede | Näme etmeli |
+|---|---|---|
+| 1 | Backend saglygy | `curl -s $BASE/api/v1/health` → `{"ok": true, ...}` |
+| 2 | GitHub → Settings → Secrets and variables → Actions → **Variables** | `API_BASE_URL` = `https://turkmen-voice-09885e66.fastapicloud.dev/api/v1` (`/api/v1` bilen, ahyrky `/` bolmasa hem bolýar) |
+| 3 | GitHub → **Actions → Build Android APK → Run workflow** | branch: `main` |
+| 4 | Workflow logy → «APK şu salga birikdirilýär: …» | salgynyň dogrudygyny barlaň (ýalňyş bolsa `::warning` çykýar) |
+| 5 | Actions → şol run → **Artifacts** | `turkmen-ses-debug-apk` (debug) ýa-da *Build Android Release APK* (`turkmen-ses-release-apk`) |
+| 6 | Telefonda synag | Admin panelde ýazgy peýda bolmaly: `$BASE/admin/` |
+
+Bellikler:
+
+- `API_BASE_URL` goýulmadyk bolsa debug APK emulyator salgysyna
+  (`http://10.0.2.2:8000/api/v1`) birikdirilýär we logda `::warning` görünýär;
+  **release** APK bolsa ýalňyşlyk bilen saklanýar (boş salgy bilen ýaýratmazlyk üçin).
+- `workflow_dispatch` diňe iş tertibi (`workflow` faýly) `main`-da bar bolsa işleýär —
+  täze workflow üýtgeşmesi `main`-a merge bolmanka «Run workflow» düwmesi görünmez.
+- Wersiýa belgisi: `pubspec.yaml` (`version: 0.3.0+3`) — täze APK her gezek
+  `versionCode`-ny ýokarlandyryň, ýogsa Android köne APK-ny täzelemez
+  (`MASLAHATLAR.md`, 4.6).
+- Debug/release APK-lar **debug açary** bilen gol çekilýär — beta üçin ýeterlik,
+  Play Store üçin aýratyn keystore gerek (`android/app/build.gradle.kts`).
+
 ---
 
 ## 4. ⚠️ Maglumat saklanyşy (hakyky korpus üçin hökman okalyň)

@@ -71,18 +71,39 @@ jobs:
           exit $status
 
       - name: Resolve API base url
+        id: api
         run: |
-          # Repository variable API_BASE_URL ýok bolsa, emulyator salgysy ulanylýar.
-          if [ -z "${{ vars.API_BASE_URL }}" ]; then
-            echo "API_BASE_URL=http://10.0.2.2:8000/api/v1" >> "$GITHUB_ENV"
+          # Repository variable: Settings → Secrets and variables → Actions →
+          # Variables → API_BASE_URL = https://<app>.fastapicloud.dev/api/v1
+          # (doly görnüşi: docs/DEPLOYMENT.md, 3.1 bölüm)
+          url="${{ vars.API_BASE_URL }}"
+          if [ -z "$url" ]; then
+            url="http://10.0.2.2:8000/api/v1"
+            echo "::warning title=API_BASE_URL goýulmadyk::APK emulyator salgysyna ($url) birikdirilýär — hakyky beta APK üçin repo variable goýuň: https://turkmen-voice-09885e66.fastapicloud.dev/api/v1"
+          fi
+          echo "url=$url" >> "$GITHUB_OUTPUT"
+          echo "APK şu salga birikdirilýär: $url"
+
+      # Serwer jogap berýärmi? (diňe habar berýär — build-y saklamaýar)
+      - name: Backend saglyk barlagy
+        if: ${{ !contains(steps.api.outputs.url, '10.0.2.2') }}
+        continue-on-error: true
+        run: |
+          base="${{ steps.api.outputs.url }}"
+          root="${base%/api/v1}"
+          code=$(curl -s -o /tmp/health.json -w '%{http_code}' -m 20 "$root/api/v1/health" || true)
+          cat /tmp/health.json 2>/dev/null || true
+          echo
+          if [ "$code" = "200" ]; then
+            echo "✅ Backend jogap berýär (HTTP $code) — $root"
           else
-            echo "API_BASE_URL=${{ vars.API_BASE_URL }}" >> "$GITHUB_ENV"
+            echo "::warning title=Backend jogap bermedi::HTTP $code — $root (deploy gutarmadyk ýa-da salgy ýalňyş bolup biler)"
           fi
 
       - name: Build debug APK
         run: |
           set +e
-          flutter build apk --debug --dart-define=API_BASE_URL=$API_BASE_URL > /tmp/apk.log 2>&1
+          flutter build apk --debug --dart-define=API_BASE_URL=${{ steps.api.outputs.url }} > /tmp/apk.log 2>&1
           status=$?
           tail -30 /tmp/apk.log
           if [ $status -ne 0 ]; then

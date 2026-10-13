@@ -28,11 +28,39 @@ jobs:
       - name: Analyze
         run: flutter analyze
 
+      - name: Resolve API base url
+        id: api
+        run: |
+          # Release APK hökman hakyky serwere birikmeli: boş bolsa build
+          # düşündirişli ýalňyşlyk bilen saklanýar (önüň ýalňyş APK-ny
+          # ýaýratmazlyk üçin).
+          url="${{ vars.API_BASE_URL }}"
+          if [ -z "$url" ]; then
+            echo "::error title=API_BASE_URL goýulmadyk::Settings → Secrets and variables → Actions → Variables → API_BASE_URL = https://turkmen-voice-09885e66.fastapicloud.dev/api/v1 goýuň."
+            exit 1
+          fi
+          echo "url=$url" >> "$GITHUB_OUTPUT"
+          echo "APK şu salga birikdirilýär: $url"
+
+      - name: Backend saglyk barlagy
+        continue-on-error: true
+        run: |
+          base="${{ steps.api.outputs.url }}"
+          root="${base%/api/v1}"
+          code=$(curl -s -o /tmp/health.json -w '%{http_code}' -m 20 "$root/api/v1/health" || true)
+          cat /tmp/health.json 2>/dev/null || true
+          echo
+          if [ "$code" = "200" ]; then
+            echo "✅ Backend jogap berýär (HTTP $code) — $root"
+          else
+            echo "::warning title=Backend jogap bermedi::HTTP $code — $root"
+          fi
+
       # The release APK is signed with the debug key (see signingConfig in
       # android/app/build.gradle.kts) — fine for testing. Publishing to the
       # Play Store requires a custom release keystore.
       - name: Build release APK
-        run: flutter build apk --release --dart-define=API_BASE_URL=${{ vars.API_BASE_URL }}
+        run: flutter build apk --release --dart-define=API_BASE_URL=${{ steps.api.outputs.url }}
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
