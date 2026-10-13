@@ -180,6 +180,7 @@ Bu işleriň meýilnamasy `MASLAHATLAR.md`-de (2-nji bölüm: öndürmek üçin 
 | `400 Invalid host header` | `PUBLIC_BASE_URL` ýa-da `ALLOWED_HOSTS` aslynda ulanýan domeniňizden başga. Dogry URL-i goýuň (localhost/127.0.0.1 elmydama rugsat berilýär). |
 | Admin panel açyk / token soramaýar | `ADMIN_TOKEN` goýulmadyk. Secret goýuň we redeploy ediň. |
 | Ýazgylar birnäçe sagatdan ýitdi | Wagtlaýyn disk (4-nji bölüm). |
+| APK serwere birikmeýär («Serwer elýeterli däl» / sinhronizasiýa düşýär) | `API_BASE_URL` variable ýalňyş (käwagt `https://example.com` ýaly ýer goýujy salgy galýar). Workflow logynda **«APK şu salga birikdirilýär: …»** setirini barlaň; dogry baha — `https://turkmen-voice-09885e66.fastapicloud.dev/api/v1`. |
 | `PUBLIC_BASE_URL` ýalňyş → audio linkler 404 | Eksportda/`audio_url`-da ulanylýar; App → Overview-daky doly URL-i goýuň. |
 | Deploy “failed” bolsa | Dashboard → **Deployments → şol deployment → Logs**; iň soňky işleýän wersiýa awtomatik saklanýar. |
 
