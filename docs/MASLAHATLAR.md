@@ -7,14 +7,19 @@ Bu faýl häzirki ýagdaýdan (v0.3) soň **haýsy işleriň iň köp peýda ber
 
 ## 1. Häzir etmeli (birnäçe sagatlyk iş)
 
-### 1.1. Backend-i serwere çykarmak
-Iň çalt wariant: **Fly.io** (hemişelik disk 3 GB, awtomatik HTTPS, ukypsyz planet ýok).
-2-nji wariant: **Render** (starter plan + 5 GB disk). Own VPS üçin `docker compose` +
-Caddy taýýar. Jikme-jik: `DEPLOYMENT_GUIDE.md`.
+### 1.1. Backend-i FastAPI Cloud-a çykarmak
+Repo taýýar (`backend/pyproject.toml`, `.github/workflows/deploy-fastapi-cloud.yml`).
+Galan işler dashboard-da:
+
+- **Application Directory** = `backend` (App → Settings)
+- `ADMIN_TOKEN` (secret!), `PUBLIC_BASE_URL`, `DATA_DIR`, `CORS_ORIGINS` goýuň
+- `main`-a push → awtomatik deploy (GitHub integrasiýasy)
+
+Jikme-jik ädimme-ädim: `DEPLOYMENT.md`.
 
 Soňra:
-- `ADMIN_TOKEN` goýuň (boş bolsa admin panel açyk bolýar!)
 - APK üçin `API_BASE_URL` repository variable goýuň → APK şol serwere birikdirilip gurulýar.
+- ⚠️ FastAPI Cloud-yň diski wagtlaýyn — 4-nji bölümi (Infrastruktura) öňünden meýilleşdiriň.
 
 ### 1.2. Demo maglumat bilen synag
 ```bash
@@ -66,13 +71,17 @@ Häzir 215 sözlem bar. MVP maksady 1000+:
 
 | Zat | Häzir | Maslahat |
 |---|---|---|
-| Metadata | SQLite | 50k+ ýazgydan soň **PostgreSQL** (SQLAlchemy + Alembic) |
+| Metadata | SQLite (FastAPI Cloud-da wagtlaýyn disk!) | **PostgreSQL** (Neon/Supabase + SQLAlchemy/Alembic) — hakyky korpus üçin iň birinji iş |
 | Audio | lokal disk | **S3/R2/B2** (`boto3`), faýl ady `tk/<speaker>/<sha>.wav` |
 | Admin auth | statik token | JWT + rollar (barlaýjy / admin) |
-| Backup | ýok | `docker-compose.yml` içinde gündelik tar.gz; S3-e göçürmek |
+| Backup | `export.zip` + VPS-de gündelik tar.gz | Awtomatik eksport → S3; beta wagtynda elimiz bilen alyp durmak |
 | Monitoring | ýok | `/api/v1/health/ready` + Sentry/UptimeRobot |
 | Maglumat pozmak | bar (ulanyjy) | GDPR: «ähli maglumatymy poz» → serwerde hem poz |
-| Rate limit | ýok | `slowapi` ýa-da Caddy-de `rate_limit` |
+| Rate limit | ýok | `slowapi` ýa-da reverse proxy-de (`nginx`/Caddy) `rate_limit` |
+
+> Diqqat: FastAPI Cloud-da hemme maglumat bir nusganyň wagtlaýyn diskinde ýaşaýar —
+> redeploy bolanda ýitýär. Şonuň üçin 1-nji setir (Postgres) we 2-nji setir (S3)
+> beta gutarmanka meýilleşdirilmelidir.
 
 ---
 

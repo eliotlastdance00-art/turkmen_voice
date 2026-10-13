@@ -9,7 +9,7 @@ saklaýar we jemgyýetçilik reýtingi arkaly hilini barlaýar.
 python -m venv .venv && source .venv/bin/activate
 pip install -r requirements-dev.txt
 
-python -m pytest tests -q                 # 14 contract test
+python -m pytest tests -q                 # 22 kontrakt test
 python scripts/seed_demo.py --takes 40    # demo gürleýjiler + ýazgylar
 DATA_DIR=app/data ADMIN_TOKEN=secret uvicorn app.main:app --host 0.0.0.0 --port 8000
 ```
@@ -18,9 +18,23 @@ DATA_DIR=app/data ADMIN_TOKEN=secret uvicorn app.main:app --host 0.0.0.0 --port 
 - Swagger: `/docs`
 - Saglyk: `/api/v1/health`, `/api/v1/health/ready`
 
+## Deploy
+
+| Faýl | Kim üçin |
+|---|---|
+| `pyproject.toml` | **FastAPI Cloud** — gerekli paketler + `app.main:app` entrypoint |
+| `.python-version` | Python 3.12 (Cloud we lokal) |
+| `requirements.txt` / `requirements-dev.txt` | Docker, VPS we CI |
+| `Dockerfile`, `docker-compose.yml` | Ätiýaçlyk: öz serwer (hemişelik disk bilen) |
+| `../.github/workflows/deploy-fastapi-cloud.yml` | GitHub Actions arkaly deploy |
+
+Ädimme-ädim görkezme: **`../docs/DEPLOYMENT.md`** (Application Directory =
+`backend`, environment variables, barlag, troubleshooting).
+
 ## Gurluş
 
 ```text
+pyproject.toml  FastAPI Cloud: paketler + entrypoint (app.main:app)
 app/
   core/        config (env) + security (admin token, bearer)
   db/          SQLite shemasy (user_version migrasiýalary) + sözlem seed
@@ -31,10 +45,10 @@ app/
   schemas/     Pydantic API kontraktlary
   seed/        sentences_seed.json (6 paket / 215 sözlem)
   static/admin admin panel (bir faýl, token bilen)
-  data/        RUNTIME: sqlite + audio (git-de saklanmaýar, volume ulanyň)
+  data/        RUNTIME: sqlite + audio (goýulmaýar; DATA_DIR bilen üýtgedilýär)
 scripts/       smoke_test, seed_demo, build_whisper_dataset, whisper_finetune
 tools/         sentences_seed generator
-tests/         API contract testleri
+tests/         API kontrakt + deploy konfigurasiýa testleri
 ```
 
 ## Möhüm gurallary
@@ -45,19 +59,15 @@ tests/         API contract testleri
 | Sözlem barlagy (türkmen elipbiýi) | `services/text_service.py` |
 | Reýting + awtomatik tassyklama | `services/rating_service.py` |
 | Ball / dereje / nyşan | `services/user_service.py`, `services/points.py` |
-| Whisper eksporty + hil hasabaty | `services/dataset_service.py` |
+| Whisper eksporty + hil hasabat | `services/dataset_service.py` |
 
 ## Konfigurasiýa (environment)
 
-`DATA_DIR`, `ADMIN_TOKEN`, `CORS_ORIGINS`, `PUBLIC_BASE_URL`, `TARGET_SAMPLE_RATE`,
-`MIN/MAX_DURATION_MS`, `MAX_AUDIO_BYTES`, `MIN_RMS_DBFS`,
-`AUTO_APPROVE_MIN_RATINGS`, `AUTO_APPROVE_MIN_SCORE`, `RATINGS_DAILY_LIMIT`.
+`DATA_DIR` (boş bolsa `backend/app/data`), `ADMIN_TOKEN`, `CORS_ORIGINS`,
+`PUBLIC_BASE_URL`, `ALLOWED_HOSTS`, `TARGET_SAMPLE_RATE`, `MIN/MAX_DURATION_MS`,
+`MAX_AUDIO_BYTES`, `MIN_RMS_DBFS`, `AUTO_APPROVE_MIN_RATINGS`,
+`AUTO_APPROVE_MIN_SCORE`, `RATINGS_DAILY_LIMIT`.
 Doly sanaw: `.env.example`.
-
-## Deploy
-
-`Dockerfile`, `render.yaml`, `fly.toml`, `docker-compose.yml` (+`Caddyfile`) taýýar.
-Ädimme-ädim görkezme: `../DEPLOYMENT_GUIDE.md`.
 
 > Production üçin: PostgreSQL, S3/R2, JWT + rollar, rate-limit, backup.
 > Häzirki SQLite + lokal disk MVP we beta synag üçin niýetlenen.

@@ -30,9 +30,22 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-# Production howpsuzlyk middleware
-allowed_hosts = ["*"] if not settings.public_base_url else [settings.public_base_url.replace("https://", "").replace("http://", "").split("/")[0]]
-app.add_middleware(TrustedHostMiddleware, allowed_hosts=allowed_hosts)
+# Production howpsuzlyk middleware.
+# PUBLIC_BASE_URL ýa-da ALLOWED_HOSTS goýulmadýan bolsa, ähli host kabul edilýär
+# (FastAPI Cloud-yň içerki health probe-y hem işlemeli!).
+def _trusted_hosts() -> list[str]:
+    if not settings.public_base_url and not settings.allowed_hosts:
+        return ["*"]
+
+    hosts = {"localhost", "127.0.0.1", "testserver"}
+    for item in (*settings.allowed_hosts, settings.public_base_url):
+        host = item.split("//")[-1].split("/")[0].strip()
+        if host:
+            hosts.add(host)
+    return sorted(hosts)
+
+
+app.add_middleware(TrustedHostMiddleware, allowed_hosts=_trusted_hosts())
 
 app.add_middleware(
     CORSMiddleware,

@@ -1,5 +1,9 @@
 # Türkmen Ses — MVP Dokumenti
 
+> **Taryhy dokument.** Bu başdaky MVP kesgitlemesi (v0.1 döwründe ýazylan) —
+> häzirki ýagdaý we deploy boýunça resminamalar: `DEPLOYMENT.md`,
+> `ARCHITECTURE.md`, `MASLAHATLAR.md` we reponyň `README.md`-si.
+
 ## 1. Dokumentiň maksady
 
 Bu dokument Türkmen dili üçin Common Voice görnüşli ses maglumat ýygnama programmasynyň ilkinji işleýän wersiýasyny — MVP-ni kesgitleýär.
