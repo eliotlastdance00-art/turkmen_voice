@@ -48,6 +48,7 @@ class HomePage extends ConsumerWidget {
                 message: session.status == SessionStatus.offline
                     ? 'Serwer elýeterli däl (${AppConfig.shortServerLabel}). Ýazgylar telefonda saklanýar.'
                     : null,
+                detail: session.status == SessionStatus.offline ? session.message : null,
                 onTap: () => ref.read(sessionProvider.notifier).refresh(),
               ),
               const SizedBox(height: 18),

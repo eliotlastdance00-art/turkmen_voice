@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:turkmen_ses/core/config/app_config.dart';
 import 'package:turkmen_ses/core/network/api_client.dart';
 import 'package:turkmen_ses/core/network/api_exception.dart';
 import 'package:turkmen_ses/core/storage/app_preferences.dart';
@@ -130,6 +131,10 @@ class SessionController extends Notifier<SessionState> {
         profile: user is Map ? user.map((key, value) => MapEntry(key.toString(), value)) : null,
       );
     } on ApiException catch (error) {
+      // `adb logcat` üçin: nädogry salgy / host rugsady / timeout ýaly
+      // sebäpleri anyklamak aňsat bolsun.
+      debugPrint('[turkmen-ses] serwer ýalňyşlygy: ${error.message} '
+          '(API: ${AppConfig.apiBaseUrl})');
       state = SessionState(
         status: SessionStatus.offline,
         profile: state.profile,

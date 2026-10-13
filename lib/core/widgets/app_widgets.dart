@@ -718,10 +718,21 @@ class _PulsingMicButtonState extends State<PulsingMicButton> with SingleTickerPr
 }
 
 class ServerStatusBanner extends StatelessWidget {
-  const ServerStatusBanner({required this.online, this.message, this.onTap, super.key});
+  const ServerStatusBanner({
+    required this.online,
+    this.message,
+    this.detail,
+    this.onTap,
+    super.key,
+  });
 
   final bool online;
   final String? message;
+
+  /// Tehniki sebäp (serwerden gelýän ýalňyşlyk teksti) — nädogry salgy,
+  /// host rugsady, timeout ýaly ýagdaýlary göni görmek üçin.
+  final String? detail;
+
   final VoidCallback? onTap;
 
   @override
@@ -738,20 +749,38 @@ class ServerStatusBanner extends StatelessWidget {
           borderRadius: BorderRadius.circular(16),
           border: Border.all(color: color.withValues(alpha: 0.3)),
         ),
-        child: Row(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Icon(online ? Icons.cloud_done_rounded : Icons.cloud_off_rounded, color: color, size: 19),
-            const SizedBox(width: 10),
-            Expanded(
-              child: Text(
-                message ??
-                    (online
-                        ? 'Serwer bilen baglanyşyk bar — ýazgylar iberilip bilner.'
-                        : 'Internet ýok. Ýazgylar telefonda nobatda saklanýar.'),
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w600),
-              ),
+            Row(
+              children: <Widget>[
+                Icon(online ? Icons.cloud_done_rounded : Icons.cloud_off_rounded, color: color, size: 19),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Text(
+                    message ??
+                        (online
+                            ? 'Serwer bilen baglanyşyk bar — ýazgylar iberilip bilner.'
+                            : 'Internet ýok. Ýazgylar telefonda nobatda saklanýar.'),
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w600),
+                  ),
+                ),
+                if (onTap != null) Icon(Icons.refresh_rounded, size: 18, color: color),
+              ],
             ),
-            if (onTap != null) Icon(Icons.refresh_rounded, size: 18, color: color),
+            if ((detail ?? '').trim().isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.only(left: 29, top: 6),
+                child: Text(
+                  'Sebäp: ${detail!.trim()}',
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: Theme.of(context)
+                      .textTheme
+                      .labelSmall
+                      ?.copyWith(color: color, fontWeight: FontWeight.w500),
+                ),
+              ),
           ],
         ),
       ),
