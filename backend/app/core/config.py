@@ -1,12 +1,13 @@
 """Application settings.
 
-Everything is driven by environment variables so the same image runs
-locally, on Render, Fly.io, Azure or a plain VPS:
+Everything is driven by environment variables so the same code runs locally,
+in Docker and on FastAPI Cloud:
 
-    DATA_DIR         where sqlite + audio live (mount a volume here)
+    DATA_DIR         where sqlite + audio live (default: backend/app/data)
     ADMIN_TOKEN      admin panel / admin API token (empty = open dev mode)
     CORS_ORIGINS     comma separated list, default "*"
     PUBLIC_BASE_URL  public url of this service (used in exports)
+    ALLOWED_HOSTS    extra Host headers to accept (comma separated)
 """
 
 from __future__ import annotations
@@ -14,6 +15,15 @@ from __future__ import annotations
 import os
 from dataclasses import dataclass, field
 from pathlib import Path
+
+# backend/ — used so that relative defaults work no matter what the current
+# working directory is (FastAPI Cloud, gunicorn, pytest, ...).
+BACKEND_ROOT = Path(__file__).resolve().parents[2]
+
+
+def _env_path(name: str, default: Path) -> Path:
+    raw = os.getenv(name)
+    return Path(raw).expanduser() if raw else default
 
 
 def _env_int(name: str, default: int) -> int:
@@ -50,8 +60,10 @@ class Settings:
     api_prefix: str = "/api/v1"
 
     # --- storage ---------------------------------------------------------
-    data_dir: Path = field(default_factory=lambda: Path(os.getenv("DATA_DIR", "app/data")))
-    seed_file: Path = field(default_factory=lambda: Path(os.getenv("SEED_FILE", "app/seed/sentences_seed.json")))
+    data_dir: Path = field(default_factory=lambda: _env_path("DATA_DIR", BACKEND_ROOT / "app" / "data"))
+    seed_file: Path = field(
+        default_factory=lambda: _env_path("SEED_FILE", BACKEND_ROOT / "app" / "seed" / "sentences_seed.json")
+    )
 
     # --- audio contract (Whisper wants 16 kHz mono pcm16) ----------------
     target_sample_rate: int = _env_int("TARGET_SAMPLE_RATE", 16_000)
@@ -79,6 +91,7 @@ class Settings:
     admin_token: str = os.getenv("ADMIN_TOKEN", "")
     cors_origins: tuple[str, ...] = field(default_factory=lambda: _env_list("CORS_ORIGINS", ("*",)))
     public_base_url: str = os.getenv("PUBLIC_BASE_URL", "")
+    allowed_hosts: tuple[str, ...] = field(default_factory=lambda: _env_list("ALLOWED_HOSTS", ()))
 
     # ---------------------------------------------------------------------
     @property

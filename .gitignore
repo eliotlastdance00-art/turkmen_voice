@@ -61,3 +61,12 @@ backend/.cache/
 backend/exports/
 exports/
 *.whl
+
+# Python packaging
+*.egg-info/
+
+# Local scratch (one-off scripts, downloads) — never commit
+/scratch/
+
+# FastAPI Cloud local linking (app id) — never commit
+.fastapicloud/

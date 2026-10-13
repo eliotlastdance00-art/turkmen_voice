@@ -1,0 +1,25 @@
+# FastAPI Cloud builds this project with uv and reads the settings below.
+#
+#   Application Directory (FastAPI Cloud dashboard → App → Settings) = "backend"
+#   Entrypoint  → app/main.py  (app object: app.main:app)
+#   Deploy      → git push to main | `fastapi deploy` | GitHub Actions
+#
+# Dependency soragy: Docker/CI `requirements.txt` ulanýar, FastAPI Cloud şu faýly.
+# Iki sanawyň wersiýalary birmeňzeş saklanmaly.
+
+[project]
+name = "turkmen-ses-api"
+version = "0.3.0"
+description = "Türkmençe ses maglumat ýygnama API (Whisper fine-tuning üçin)"
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi[standard]==0.115.5",
+    "python-multipart==0.0.17",
+]
+
+# Program (paket däl) — uv proýekti paket hökmünde gurmaly däl.
+[tool.uv]
+package = false
+
+[tool.fastapi]
+entrypoint = "app.main:app"

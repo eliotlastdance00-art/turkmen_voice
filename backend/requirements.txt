@@ -1,3 +1,8 @@
+# Runtime dependencies (Docker, VPS, CI).
+#
+#   FastAPI Cloud → bu faýl däl, `pyproject.toml` okalýar (app.main:app entrypoint bilen).
+#   Iki faýlyň wersiýalary birmeňzeş saklanmaly.
+
 fastapi==0.115.5
 uvicorn[standard]==0.32.0
 gunicorn==23.0.0

@@ -1,16 +1,16 @@
-# Türkmen Ses — Türkmençe ses maglumat ýygnama ulgamy
+# Türkmen Ses — türkmençe ses maglumat ýygnama ulgamy
 
 Whisper (we beýleki STT modelleri) üçin **arassa, barlanan türkmençe ses + tekst**
-datasetini ýygnamak ulgamy. Üç bölekden durýar:
+datasetini ýygnamak ulgamy. Iki bölekden durýar:
 
 ```text
 turkmen_voice/
   lib/        Flutter programma (Android/iOS) — offline first, 5 bölümli UI
-  backend/    FastAPI + SQLite — API, admin panel, Whisper eksporty
-  docs        DEPLOYMENT_GUIDE.md, MASLAHATLAR.md, Turkmen_Ses_MVP_Dokument.md
+  backend/    FastAPI + SQLite — API, admin panel, Whisper eksporty (FastAPI Cloud)
+  docs/       DEPLOYMENT.md, ARCHITECTURE.md, MASLAHATLAR.md, MVP.md
 ```
 
-## Häzirki ýagdaý (v0.2 / API v0.3)
+## Häzirki ýagdaý (v0.3)
 
 | Bölüm | Ýagdaý |
 |---|---|
@@ -23,7 +23,8 @@ turkmen_voice/
 | Admin panel | ✅ filtr, diňlemek, tassyk/ret, hil hasabaty, eksportlar |
 | Whisper eksporty | ✅ JSONL / Whisper JSONL / CSV / TSV / ZIP + report.json |
 | Fine-tuning skriptleri | ✅ `build_whisper_dataset.py`, `whisper_finetune.py` |
-| Deploy | ✅ Docker, Render, Fly.io, VPS (compose + Caddy), Azure |
+| Deploy | ✅ **FastAPI Cloud** (`docs/DEPLOYMENT.md`) + Docker (ätiýaçlyk) |
+| Testler | ✅ 22 backend kontrakt testi (`pytest`) |
 
 ## Çalt başlangyç
 
@@ -34,7 +35,7 @@ cd backend
 python -m venv .venv && source .venv/bin/activate
 pip install -r requirements-dev.txt
 
-python -m pytest tests -q            # 14 contract test
+python -m pytest tests -q                # 22 kontrakt test
 python scripts/seed_demo.py --takes 40   # demo maglumat (reýting tablisasy üçin)
 
 DATA_DIR=app/data ADMIN_TOKEN=secret uvicorn app.main:app --host 0.0.0.0 --port 8000
@@ -60,23 +61,26 @@ flutter run --dart-define=API_BASE_URL=http://192.168.1.50:8000/api/v1
 APK: **Actions → Build Android APK** (repo variable `API_BASE_URL` goýuň) ýa-da
 `flutter build apk --release --dart-define=API_BASE_URL=...`.
 
-### 3. Serwere çykarmak
-
-`DEPLOYMENT_GUIDE.md` — Fly.io / Render / VPS / Azure ädimme-ädim. Iň gysgasy:
+### 3. Serwere çykarmak (FastAPI Cloud)
 
 ```bash
-cd backend
-fly launch --copy-config --name turkmen-ses-api
-fly volumes create turkmen_ses_data --size 3
-fly secrets set ADMIN_TOKEN=$(openssl rand -hex 16)
-fly deploy
+# 1) dashboard → App → Settings → Application Directory = backend
+# 2) environment: ADMIN_TOKEN (secret), PUBLIC_BASE_URL, DATA_DIR, CORS_ORIGINS
+# 3) main-a push (GitHub integrasiýasy) ýa-da:
+cd backend && fastapi deploy
 ```
+
+Doly ädimme-ädim, barlag we troubleshooting: **`docs/DEPLOYMENT.md`**.
+
+> ⚠️ FastAPI Cloud-yň diski wagtlaýyn (SQLite + audio redeployda gaýtadan
+> başlanýar) — beta üçin ýeterlik, hakyky korpus üçin Postgres + S3 meýilleşdiriň
+> (`docs/MASLAHATLAR.md`, 3-nji bölüm).
 
 ## API gysgaça
 
 | Metod | Ýol | Bellik |
 |---|---|---|
-| GET | `/api/v1/health`, `/health/ready` | saglyk barlagy |
+| GET | `/api/v1/health`, `/health/ready` | saglyk barlagy (ready: disk ýazylýarmy) |
 | GET | `/api/v1/sentences`, `/sentences/packages`, `/sentences/random` | sözlemler |
 | POST | `/api/v1/recordings` | multipart: `recording_id, sentence_id, text, consent_type, duration_ms, audio_file` (+ islege görä `category, package_id, sample_rate, channels, bit_depth`) |
 | GET | `/api/v1/recordings/{id}`, `/{id}/audio`, `/{id}/ratings` | ýazgy, ses, baha |
@@ -101,12 +105,14 @@ python backend/scripts/build_whisper_dataset.py --input dataset --output whisper
 python backend/scripts/whisper_finetune.py --dataset whisper_dataset --model openai/whisper-small
 ```
 
-## Goşmaça dokumentler
+## Dokumentler (`docs/`)
 
-- `DEPLOYMENT_GUIDE.md` — serwere çykarmak, backup, barlag sanawy
-- `MASLAHATLAR.md` — indiki ädimler we gowulandyrmak boýunça maslahatlar
-- `Turkmen_Ses_MVP_Dokument.md` — başdaky MVP kesgitlemesi
-- `backend/ARCHITECTURE.md` — backend arhitekturasy (gatlaklar)
+| Faýl | Maksady |
+|---|---|
+| `DEPLOYMENT.md` | FastAPI Cloud-a çykarmak, barlag, troubleshooting, VPS ätiýaçlygy |
+| `ARCHITECTURE.md` | Backend gatlaklary we esasy kararlar |
+| `MASLAHATLAR.md` | Indiki ädimler (hil, infrastruktura, model) |
+| `MVP.md` | Başdaky MVP kesgitlemesi (taryhy) |
 
 ## Android rugsatlar
 

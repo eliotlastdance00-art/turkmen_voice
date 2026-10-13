@@ -1,42 +1,38 @@
-# Öz serweriňizde (VPS) işletmek üçin:  docker compose up -d
-# Caddy awtomatiki HTTPS sertifikat alýar (domeniňiz bar bolsa).
+# Öz serweriňizde (VPS) işletmek üçin:  docker compose up -d --build
+#
+#   cd backend
+#   ADMIN_TOKEN=$(openssl rand -hex 16) \
+#   PUBLIC_BASE_URL=https://api.sizin-domen.tm \
+#   docker compose up -d --build
+#
+# SQLite bazasy + ses faýllary `turkmen_ses_data` hemişelik diskinde saklanýar.
+# API 8000-nji portda diňleýär — HTTPS üçin öňünde nginx/Caddy goýuň.
+# (FastAPI Cloud ulanylsa, bu faýl gerek däl: docs/DEPLOYMENT.md → 2-nji bölüm.)
+
 services:
   api:
     build: .
     restart: unless-stopped
+    ports:
+      - "8000:8000"
     environment:
       DATA_DIR: /data
-      ADMIN_TOKEN: ${ADMIN_TOKEN:-change-me}
+      PORT: "8000"
+      WEB_CONCURRENCY: ${WEB_CONCURRENCY:-2}
+      ADMIN_TOKEN: ${ADMIN_TOKEN:?ADMIN_TOKEN goýulmaly — openssl rand -hex 16}
       PUBLIC_BASE_URL: ${PUBLIC_BASE_URL:-}
       CORS_ORIGINS: ${CORS_ORIGINS:-*}
-      AUTO_APPROVE_MIN_RATINGS: "3"
-      AUTO_APPROVE_MIN_SCORE: "4.0"
+      AUTO_APPROVE_MIN_RATINGS: ${AUTO_APPROVE_MIN_RATINGS:-3}
+      AUTO_APPROVE_MIN_SCORE: ${AUTO_APPROVE_MIN_SCORE:-4.0}
     volumes:
       - turkmen_ses_data:/data
-      - ./backups:/backups
-    expose:
-      - "8000"
     healthcheck:
       test: ["CMD", "python", "-c", "import urllib.request;urllib.request.urlopen('http://127.0.0.1:8000/api/v1/health',timeout=4)"]
       interval: 30s
       timeout: 5s
       retries: 3
 
-  caddy:
-    image: caddy:2-alpine
-    restart: unless-stopped
-    depends_on:
-      - api
-    ports:
-      - "80:80"
-      - "443:443"
-    environment:
-      API_DOMAIN: ${API_DOMAIN:-localhost}
-    volumes:
-      - ./Caddyfile:/etc/caddy/Caddyfile:ro
-      - caddy_data:/data
-      - caddy_config:/config
-
+  # Gündelik arhiw: ./backups/turkmen-ses-YYYYMMDD-HHMM.tar.gz (14 gün saklanýar)
   backup:
     image: alpine:3.20
     restart: unless-stopped
@@ -55,5 +51,3 @@ services:
 
 volumes:
   turkmen_ses_data:
-  caddy_data:
-  caddy_config:

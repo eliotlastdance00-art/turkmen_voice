@@ -1,0 +1,80 @@
+name: Deploy backend to FastAPI Cloud
+
+# Backend-i FastAPI Cloud-a goýberýär.
+#
+# Gerekli GitHub sazlamalary (Settings → Secrets and variables → Actions):
+#   Secrets:  FASTAPI_CLOUD_TOKEN   (FastAPI Cloud → App → Deploy Tokens)
+#             FASTAPI_CLOUD_APP_ID  (App → Settings → App ID)
+#
+# Iň aňsat ýol:  fastapi cloud setup-ci --secrets-only --app-id <app-id>
+# şol buýruk tokeni döredip, secretleri özi goýýar.
+#
+# Diqqat: FastAPI Cloud-yň GitHub integrasiýasy birikdirilen bolsa, `main`-a
+# her push awtomatik deploy bolýar — onda bu workflow diňe el bilen goýbermek
+# (workflow_dispatch) üçin ätiýaçlyk ýol bolup galýar.
+
+on:
+  push:
+    branches: [main, master]
+    paths:
+      - 'backend/**'
+      - '.github/workflows/deploy-fastapi-cloud.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    name: Test backend
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: backend/requirements-dev.txt
+
+      - name: Install dependencies
+        run: pip install -r requirements-dev.txt
+
+      - name: Run API contract tests
+        run: python -m pytest tests -q
+
+  deploy:
+    name: Deploy to FastAPI Cloud
+    needs: verify
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Secret barlagy
+        id: guard
+        env:
+          TOKEN: ${{ secrets.FASTAPI_CLOUD_TOKEN }}
+        run: |
+          if [ -z "$TOKEN" ]; then
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+            echo "FASTAPI_CLOUD_TOKEN ýok — deploy geçirildi. Render/Fly ýok: diňe FastAPI Cloud ulanylýar."
+            echo "Goýmak üçin: fastapi cloud setup-ci --secrets-only"
+          else
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Install uv
+        if: steps.guard.outputs.skip == 'false'
+        uses: astral-sh/setup-uv@v7
+
+      - name: Deploy (fastapi deploy)
+        if: steps.guard.outputs.skip == 'false'
+        working-directory: backend
+        run: uv run fastapi deploy
+        env:
+          FASTAPI_CLOUD_TOKEN: ${{ secrets.FASTAPI_CLOUD_TOKEN }}
+          FASTAPI_CLOUD_APP_ID: ${{ secrets.FASTAPI_CLOUD_APP_ID }}
