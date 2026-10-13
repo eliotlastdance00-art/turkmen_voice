@@ -1,7 +1,9 @@
 from contextlib import asynccontextmanager
+from pathlib import Path
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.middleware.trustedhost import TrustedHostMiddleware
 from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
 
@@ -28,6 +30,10 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
+# Production howpsuzlyk middleware
+allowed_hosts = ["*"] if not settings.public_base_url else [settings.public_base_url.replace("https://", "").replace("http://", "").split("/")[0]]
+app.add_middleware(TrustedHostMiddleware, allowed_hosts=allowed_hosts)
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=list(settings.cors_origins),
@@ -46,7 +52,9 @@ app.include_router(leaderboard.router, prefix=settings.api_prefix)
 app.include_router(stats.router, prefix=settings.api_prefix)
 app.include_router(admin.router, prefix=settings.api_prefix)
 
-app.mount("/admin", StaticFiles(directory="app/static/admin", html=True), name="admin")
+# Static fayllar üçin ýol (docker we lokal işlemek üçin ýörite)
+STATIC_DIR = Path(__file__).parent / "static" / "admin"
+app.mount("/admin", StaticFiles(directory=str(STATIC_DIR), html=True), name="admin")
 
 
 @app.get("/", include_in_schema=False)
