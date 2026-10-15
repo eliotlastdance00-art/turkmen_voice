@@ -210,8 +210,8 @@ class SentenceRepository {
     return fresh.first;
   }
 
-  /// Öý eýesiniň ýazga almadyk sözlemleri (serwer soragy üçin).
-  Future<List<String>> recordedSentenceIds() => ref.read(databaseProvider).recordedSentenceIds();
+  /// Eýýäm ýazylan sözlemleriň ID-leri (ýazga alnan tekstler boýunça hem).
+  Future<Set<String>> recordedSentenceIds() => ref.read(databaseProvider).recordedSentenceIds();
 
   static int _int(Object? value, {int fallback = 0}) {
     if (value is num) {
