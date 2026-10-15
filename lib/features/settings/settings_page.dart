@@ -412,7 +412,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                             Branding.appIconAsset,
                             width: 44,
                             height: 44,
-                            errorBuilder: (_, __, ___) => const SizedBox.shrink(),
+                            errorBuilder: (_, _, _) => const SizedBox.shrink(),
                           ),
                         ),
                         const SizedBox(width: 12),

@@ -37,7 +37,7 @@ class SplashScreen extends StatelessWidget {
                 child: Image.asset(
                   kAppIconAsset,
                   fit: BoxFit.cover,
-                  errorBuilder: (_, __, ___) => Container(
+                  errorBuilder: (_, _, _) => Container(
                     color: Colors.white.withValues(alpha: 0.16),
                     child: const Icon(Icons.graphic_eq_rounded, size: 48, color: Colors.white),
                   ),
