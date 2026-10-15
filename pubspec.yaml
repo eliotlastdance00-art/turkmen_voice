@@ -41,3 +41,6 @@ flutter:
     # Sözlem goraghanasy programmanyň içinde — internet bolmasa-da tekst bar.
     # Çeşme: backend/app/seed/sentences_seed.json (tools/sync_seed_asset.py).
     - assets/sentences_seed.json
+    # Brend ikonasy (Android mipmap-lary hem şondan öndürilýär):
+    # tools/build_app_icons.py
+    - assets/branding/app_icon_512.png

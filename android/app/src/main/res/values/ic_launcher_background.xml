@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Adaptive icon fony: brend ikonasynyň fon reňki (awtomatik alynýar).
+         Dörediji: tools/build_app_icons.py -->
+    <color name="ic_launcher_background">#05636A</color>
+</resources>

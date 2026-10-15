@@ -120,6 +120,28 @@ python backend/scripts/whisper_finetune.py --dataset whisper_dataset --model ope
 | `MASLAHATLAR.md` | Indiki ädimler (hil, infrastruktura, model) |
 | `MVP.md` | Başdaky MVP kesgitlemesi (taryhy) |
 
+## Ikon we brend
+
+| Faýl | Maksady |
+|---|---|
+| `assets/branding/app_icon.png` | **Çeşme** brend ikonasy (1600×1600, mikrofonly teal kwadrat) |
+| `android/app/src/main/res/mipmap-*/` | Her dykyzlyk üçin `ic_launcher`, `ic_launcher_round`, `ic_launcher_foreground` |
+| `android/.../mipmap-anydpi-v26/` | Adaptive icon (Android 8+) — fon + öňki gatlak + monohrom görnüş |
+| `assets/branding/app_icon_512.png` | Play Store / paýlaşmak üçin 512×512 |
+| `tools/build_app_icons.py` | Ählisini çeşme suratdan öndürýär (Pillow gerek) |
+
+Ikonany çalyşmak: `assets/branding/app_icon.png`-i täze kwadrat surat bilen
+çalyşyň we
+
+```bash
+python tools/build_app_icons.py     # mipmap-lary we 512 nusgasyny täzeleýär
+cd backend && python -m pytest tests/test_branding_assets.py -q   # barlag
+```
+
+Testler ikonlaryň ölçegini, adaptive icon beýanyny we manifestiň
+`android:roundIcon` baglanyşygyny barlaýar — Flutter-iň öz ikonasy APK-da
+galmaýar.
+
 ## Android rugsatlar
 
 `android/app/src/main/AndroidManifest.xml`:

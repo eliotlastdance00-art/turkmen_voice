@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:turkmen_ses/core/branding.dart';
 import 'package:turkmen_ses/core/config/app_config.dart';
 import 'package:turkmen_ses/core/network/api_exception.dart';
 import 'package:turkmen_ses/core/storage/app_database.dart';
@@ -403,9 +404,23 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    Text(
-                      'Programma barada',
-                      style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w800),
+                    Row(
+                      children: <Widget>[
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(12),
+                          child: Image.asset(
+                            Branding.appIconAsset,
+                            width: 44,
+                            height: 44,
+                            errorBuilder: (_, __, ___) => const SizedBox.shrink(),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Text(
+                          'Programma barada',
+                          style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w800),
+                        ),
+                      ],
                     ),
                     const SizedBox(height: 8),
                     Text(

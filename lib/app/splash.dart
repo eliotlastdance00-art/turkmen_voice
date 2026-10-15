@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'package:turkmen_ses/core/branding.dart';
 import 'package:turkmen_ses/core/config/app_config.dart';
 import 'package:turkmen_ses/core/theme/app_theme.dart';
 
@@ -27,14 +28,21 @@ class SplashScreen extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            Container(
-              width: 96,
-              height: 96,
-              decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.16),
-                borderRadius: BorderRadius.circular(28),
+            // Programmanyň ikonasy (assets/branding/app_icon.png-den öndürilen)
+            ClipRRect(
+              borderRadius: BorderRadius.circular(28),
+              child: SizedBox(
+                width: 96,
+                height: 96,
+                child: Image.asset(
+                  kAppIconAsset,
+                  fit: BoxFit.cover,
+                  errorBuilder: (_, __, ___) => Container(
+                    color: Colors.white.withValues(alpha: 0.16),
+                    child: const Icon(Icons.graphic_eq_rounded, size: 48, color: Colors.white),
+                  ),
+                ),
               ),
-              child: const Icon(Icons.graphic_eq_rounded, size: 48, color: Colors.white),
             ),
             const SizedBox(height: 20),
             Text(
