@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from fastapi import Depends, Header, HTTPException, status
 
-from app.core.security import bearer_token
+from app.core.security import bearer_token, legacy_user_id
 from app.domain.entities.recording import User
 from app.repositories.sqlite_rating_repository import SqliteRatingRepository
 from app.repositories.sqlite_recording_repository import SqliteRecordingRepository
@@ -76,11 +76,18 @@ def optional_user(
     x_device_id: str | None = Header(default=None, alias="X-Device-Id"),
     users: SqliteUserRepository = Depends(user_repository),
 ) -> User | None:
-    """Resolve the caller from the bearer token or the raw device id."""
+    """Resolve the caller from the bearer token or the raw device id.
+
+    Three ways in, in this order:
+    1. the stored account token (current app),
+    2. ``tk_<user_id>`` (first APK — still supported),
+    3. the ``X-Device-Id`` header (re-registers automatically).
+    """
     token = bearer_token(authorization)
     if token:
-        user_id = token[3:] if token.startswith("tk_") else token
-        user = users.get(user_id)
+        user = users.get_by_token(token)
+        if user is None:
+            user = users.get(legacy_user_id(token))
         if user is not None:
             return user
     if x_device_id:

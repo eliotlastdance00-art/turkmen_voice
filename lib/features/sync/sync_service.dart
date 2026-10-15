@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 
+import 'package:turkmen_ses/core/network/api_client.dart';
 import 'package:turkmen_ses/core/network/api_contract.dart';
 import 'package:turkmen_ses/core/network/api_exception.dart';
 import 'package:turkmen_ses/core/storage/app_database.dart';
@@ -21,6 +22,7 @@ class SyncProgress {
     this.uploaded = 0,
     this.failed = 0,
     this.ratings = 0,
+    this.duplicates = 0,
     this.lastMessage,
     this.lastError,
   });
@@ -31,6 +33,9 @@ class SyncProgress {
   final int uploaded;
   final int failed;
   final int ratings;
+
+  /// Serwer "bu sözlem eýýäm ýazylan" diýen ýazgylar (gaýtadan iberilmeýär).
+  final int duplicates;
   final String? lastMessage;
   final String? lastError;
 
@@ -43,6 +48,7 @@ class SyncProgress {
     int? uploaded,
     int? failed,
     int? ratings,
+    int? duplicates,
     String? lastMessage,
     String? lastError,
   }) {
@@ -53,6 +59,7 @@ class SyncProgress {
       uploaded: uploaded ?? this.uploaded,
       failed: failed ?? this.failed,
       ratings: ratings ?? this.ratings,
+      duplicates: duplicates ?? this.duplicates,
       lastMessage: lastMessage ?? this.lastMessage,
       lastError: lastError ?? this.lastError,
     );
@@ -69,6 +76,7 @@ class SyncService {
 
   Future<SyncProgress> flush({
     void Function(SyncProgress progress)? onProgress,
+    Future<void> Function()? onSessionExpired,
   }) async {
     var progress = SyncProgress(running: true, lastMessage: 'Nobat barlanýar...');
     onProgress?.call(progress);
@@ -87,30 +95,49 @@ class SyncService {
     progress = progress.copyWith(total: pending.length);
     onProgress?.call(progress);
 
+    // Serwer hakykatdan-da janlymy? (WiFi bar, ýöne host ýetilmeýän bolup biler)
+    if (pending.isNotEmpty && api is ApiClient && !await (api as ApiClient).ping()) {
+      progress = progress.copyWith(
+        running: false,
+        lastError: 'Serwer jogap bermedi (${(api as ApiClient).baseUrl}).',
+        lastMessage: 'Nobat saklandy.',
+      );
+      onProgress?.call(progress);
+      return progress;
+    }
+
     for (final item in pending) {
       try {
         await database.updateStatus(item.id, 'uploading');
-        await api.uploadRecording(
-          filePath: item.audioPath,
-          metadata: <String, dynamic>{
-            'recording_id': item.id,
-            'sentence_id': item.sentenceId,
-            'text': item.textValue,
-            'language': 'tk',
-            'consent_type': item.consentType,
-            'duration_ms': item.durationMs,
-            'category': item.category,
-            'package_id': item.packageId,
-            'sample_rate': 16000,
-            'channels': 1,
-            'bit_depth': 16,
-          },
-        );
+        await _uploadTake(item);
         await database.markUploaded(item.id);
         progress = progress.copyWith(done: progress.done + 1, uploaded: progress.uploaded + 1);
+      } on ApiException catch (error) {
+        if (error.statusCode == 409) {
+          // Bu sözlem eýýäm ýazylan — gaýtadan ibermegiň manysy ýok,
+          // nobatdan aýyrýarys (faýl telefonda galýar).
+          await database.updateStatus(item.id, 'duplicate', error: error.message);
+          progress = progress.copyWith(done: progress.done + 1, duplicates: progress.duplicates + 1);
+        } else if (error.statusCode == 401 && onSessionExpired != null) {
+          // Token nädogry (serwer täzelenen / başga baza) — hasaby täzeden
+          // döredip, ýazgy bir gezek gaýtalanýar.
+          await onSessionExpired();
+          try {
+            await _uploadTake(item);
+            await database.markUploaded(item.id);
+            progress = progress.copyWith(done: progress.done + 1, uploaded: progress.uploaded + 1);
+            onProgress?.call(progress);
+            continue;
+          } on ApiException catch (retryError) {
+            await _markFailed(item.id, retryError.message);
+            progress = progress.copyWith(done: progress.done + 1, failed: progress.failed + 1);
+          }
+        } else {
+          await _markFailed(item.id, error.message);
+          progress = progress.copyWith(done: progress.done + 1, failed: progress.failed + 1);
+        }
       } catch (error) {
-        await database.bumpSyncAttempt(item.id);
-        await database.updateStatus(item.id, 'failed', error: error.toString());
+        await _markFailed(item.id, '$error');
         progress = progress.copyWith(done: progress.done + 1, failed: progress.failed + 1);
       }
       onProgress?.call(progress);
@@ -135,18 +162,47 @@ class SyncService {
           await database.deleteRating(rating.id);
           continue;
         }
+        if (error.statusCode == 401 && onSessionExpired != null) {
+          await onSessionExpired();
+        }
         break;
       }
     }
 
+    final duplicateNote = progress.duplicates > 0 ? ', ${progress.duplicates} gaýtalanýan' : '';
     progress = progress.copyWith(
       running: false,
       ratings: syncedRatings,
-      lastMessage: '${progress.uploaded} ýazgy, $syncedRatings baha iberildi.',
+      lastMessage: '${progress.uploaded} ýazgy$duplicateNote, $syncedRatings baha iberildi.',
       lastError: progress.failed > 0 ? '${progress.failed} ýazgy şowsuz boldy.' : null,
     );
     onProgress?.call(progress);
     return progress;
+  }
+
+  /// Bir ýazgyny serwere iberýär (metadata şu ýerde ýygnalýar).
+  Future<void> _uploadTake(Recording item) {
+    return api.uploadRecording(
+      filePath: item.audioPath,
+      metadata: <String, dynamic>{
+        'recording_id': item.id,
+        'sentence_id': item.sentenceId,
+        'text': item.textValue,
+        'language': 'tk',
+        'consent_type': item.consentType,
+        'duration_ms': item.durationMs,
+        'category': item.category,
+        'package_id': item.packageId,
+        'sample_rate': 16000,
+        'channels': 1,
+        'bit_depth': 16,
+      },
+    );
+  }
+
+  Future<void> _markFailed(String id, String message) async {
+    await database.bumpSyncAttempt(id);
+    await database.updateStatus(id, 'failed', error: message);
   }
 
   Future<bool> _hasConnection() async {
@@ -163,6 +219,8 @@ class SyncService {
 
 class SyncController extends Notifier<SyncProgress> {
   StreamSubscription<List<ConnectivityResult>>? _subscription;
+  Timer? _retryTimer;
+  int _failedRounds = 0;
 
   @override
   SyncProgress build() {
@@ -172,6 +230,7 @@ class SyncController extends Notifier<SyncProgress> {
     }
     ref.onDispose(() {
       _subscription?.cancel();
+      _retryTimer?.cancel();
     });
     return const SyncProgress();
   }
@@ -180,8 +239,23 @@ class SyncController extends Notifier<SyncProgress> {
     _subscription?.cancel();
     _subscription = Connectivity().onConnectivityChanged.listen((results) {
       if (!results.contains(ConnectivityResult.none)) {
+        _failedRounds = 0;
         unawaited(run());
       }
+    });
+  }
+
+  /// Serwer wagtlaýyn elýeterli bolmasa, nobaty döwürleýin gaýtalap görýär
+  /// (2 min → 4 min → 8 min → iň köp 15 min). Tor gelende hasap täzelenýär.
+  void _scheduleRetry() {
+    if (_failedRounds == 0 || _retryTimer != null) {
+      return;
+    }
+    final step = _failedRounds > 3 ? 3 : _failedRounds - 1;
+    final minutes = 2 * (1 << step);
+    _retryTimer = Timer(Duration(minutes: minutes > 15 ? 15 : minutes), () {
+      _retryTimer = null;
+      unawaited(run());
     });
   }
 
@@ -189,16 +263,33 @@ class SyncController extends Notifier<SyncProgress> {
     if (state.running) {
       return state;
     }
+    // Hasap ýok / offline bolsa, ilki hasaby tassykla — ýazgylar 401 bilen
+    // ýitmesin (olaryň hemmesi `X-Device-Id` bilen hem iberilýär).
+    if (!ref.read(sessionProvider).isReady) {
+      await ref.read(sessionProvider.notifier).refresh();
+    }
     final service = SyncService(
       database: ref.read(databaseProvider),
       api: ref.read(apiClientProvider),
       preferences: ref.read(preferencesProvider),
     );
-    final result = await service.flush(onProgress: (progress) => state = progress);
+    final result = await service.flush(
+      onProgress: (progress) => state = progress,
+      onSessionExpired: () async {
+        await ref.read(sessionProvider.notifier).refresh(force: true);
+      },
+    );
     if (result.uploaded > 0 || result.ratings > 0) {
       ref.invalidate(recordingsProvider);
       ref.invalidate(ratingsProvider);
       unawaited(ref.read(sessionProvider.notifier).refresh());
+    }
+    // Şowsuz synanyşyk bolsa, öz-özünden täzeden synanyşar (tor özi gelmese-de).
+    if (result.failed > 0 || (result.total > 0 && result.uploaded == 0)) {
+      _failedRounds++;
+      _scheduleRetry();
+    } else {
+      _failedRounds = 0;
     }
     return result;
   }

@@ -68,6 +68,17 @@ class RecordingService:
             log.info("duplicate upload for %s, returning stored recording", safe_id)
             return existing
 
+        # Bir ulanyjy bir sözlemi diňe bir gezek ýazýar (telefon şol sanawy
+        # özi hem süzýär; bu — serwer tarapdaky howpsuzlyk).
+        if user_id:
+            previous = self.repository.find_by_user_sentence(user_id, sentence_id)
+            if previous is not None and previous.status is not RecordingStatus.REJECTED:
+                raise HTTPException(
+                    409,
+                    "Bu sözlem eýýäm ýazylan. Täzeden ýazga almak üçin öňki ýazgyňyzy pozmaly "
+                    "(«Ýazgylar» bölümi) ýa-da başga sözlem saýlaň.",
+                )
+
         shard = (user_id or device_id or "anon")[:2].lower().replace("/", "_") or "an"
         target_dir = self.audio_root / shard
         target_dir.mkdir(parents=True, exist_ok=True)

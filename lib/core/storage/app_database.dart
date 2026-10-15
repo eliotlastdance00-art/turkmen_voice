@@ -182,6 +182,19 @@ class AppDatabase extends _$AppDatabase {
     });
   }
 
+  /// Ýeke sözlem goşmak (ulanyjynyň özi ýazan teksti).
+  Future<void> saveSentence(SentencesCompanion row) => into(sentences).insertOnConflictUpdate(row);
+
+  /// Eýýäm ýazga alnan sözlemleriň ID-leri — bir sözlem iki gezek
+  /// ýazylmaz ýaly (haýsy enjamda ýazylan bolsa-da).
+  Future<Set<String>> recordedSentenceIds() async {
+    final rows = await select(recordings).get();
+    return rows
+        .map((row) => row.sentenceId)
+        .where((id) => !id.startsWith('custom_'))
+        .toSet();
+  }
+
   // ---------------------------------------------------------------- ratings
   Future<void> queueRating(RatingsCompanion row) => into(ratings).insertOnConflictUpdate(row);
 

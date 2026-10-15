@@ -211,7 +211,7 @@
   },
   {
    "id": "sentence_000019",
-   "text": "Gapyny ýapyp, jaňy goýber.",
+   "text": "Gapyny ýapyp, jaňa bas.",
    "language": "tk",
    "category": "daily",
    "package_id": "package_001",
@@ -301,7 +301,7 @@
   },
   {
    "id": "sentence_000029",
-   "text": "Ussa diwary reňkläp taýýarlady.",
+   "text": "Ussa diwary reňkleýär.",
    "language": "tk",
    "category": "daily",
    "package_id": "package_001",
@@ -337,7 +337,7 @@
   },
   {
    "id": "sentence_000033",
-   "text": "Ejem miwe jöwzasyndan kompot bişirdi.",
+   "text": "Ejem miwelerden kompot bişirdi.",
    "language": "tk",
    "category": "daily",
    "package_id": "package_001",
@@ -346,7 +346,7 @@
   },
   {
    "id": "sentence_000034",
-   "text": "Biz howluda agaç oturdysdyk.",
+   "text": "Biz howluda agaç oturtdyk.",
    "language": "tk",
    "category": "daily",
    "package_id": "package_001",
@@ -364,7 +364,7 @@
   },
   {
    "id": "sentence_000036",
-   "text": "Men täze futbol kubogyny satyn aldym.",
+   "text": "Men täze futbol topuny satyn aldym.",
    "language": "tk",
    "category": "daily",
    "package_id": "package_001",
@@ -382,7 +382,7 @@
   },
   {
    "id": "sentence_000038",
-   "text": "Seniň aýdanyň dogry, men razylaşýaryn.",
+   "text": "Seniň aýdanyň dogry, men hem razy.",
    "language": "tk",
    "category": "daily",
    "package_id": "package_001",
@@ -436,7 +436,7 @@
   },
   {
    "id": "sentence_000044",
-   "text": "Ýyl iki müň ýigrimi altynjy ýyl.",
+   "text": "Häzir iki müň ýigrimi altynjy ýyl.",
    "language": "tk",
    "category": "numbers",
    "package_id": "package_002",
@@ -472,7 +472,7 @@
   },
   {
    "id": "sentence_000048",
-   "text": "Kitabymyň basylan ýyly bäş ýyl öň.",
+   "text": "Kitabym bäş ýyl öň basyldy.",
    "language": "tk",
    "category": "numbers",
    "package_id": "package_002",
@@ -589,7 +589,7 @@
   },
   {
    "id": "sentence_000061",
-   "text": "Müň metr ýol pyýada gitdik.",
+   "text": "Bir müň metr ýol pyýada gitdik.",
    "language": "tk",
    "category": "numbers",
    "package_id": "package_002",
@@ -625,11 +625,11 @@
   },
   {
    "id": "sentence_000065",
-   "text": "Ýygyrmy dört sagat dowam eden ýol.",
+   "text": "Ýigrimi dört sagat dowam eden ýol boldy.",
    "language": "tk",
    "category": "numbers",
    "package_id": "package_002",
-   "difficulty": 1,
+   "difficulty": 2,
    "order": 24
   },
   {
@@ -643,7 +643,7 @@
   },
   {
    "id": "sentence_000067",
-   "text": "Çärýek sagat garaşmagyňyzy haýyş edýärin.",
+   "text": "On bäş minut garaşmagyňyzy haýyş edýärin.",
    "language": "tk",
    "category": "numbers",
    "package_id": "package_002",
@@ -670,7 +670,7 @@
   },
   {
    "id": "sentence_000070",
-   "text": "Dokuzynjy synagda maksat hasyl boldy.",
+   "text": "Dokuzynjy synag üstünlikli tamamlandy.",
    "language": "tk",
    "category": "numbers",
    "package_id": "package_002",
@@ -715,7 +715,7 @@
   },
   {
    "id": "sentence_000075",
-   "text": "Şu ýazgynyň dowamlylygy on sekiz sekunt.",
+   "text": "Şu ýazgynyň dowamlylygy on bäş sekunt.",
    "language": "tk",
    "category": "numbers",
    "package_id": "package_002",
@@ -787,7 +787,7 @@
   },
   {
    "id": "sentence_000083",
-   "text": "Hazar deňziniň suwy turgenç.",
+   "text": "Hazar deňziniň suwy salkyn.",
    "language": "tk",
    "category": "nature",
    "package_id": "package_003",
@@ -985,7 +985,7 @@
   },
   {
    "id": "sentence_000105",
-   "text": "Ekin meýdanlary ýaşyl reňke beslendi.",
+   "text": "Ekin meýdanlary ýaşyl reňke öwrüldi.",
    "language": "tk",
    "category": "nature",
    "package_id": "package_003",
@@ -1003,7 +1003,7 @@
   },
   {
    "id": "sentence_000107",
-   "text": "Tepegöz guşy asmanda aýlanyp uçýar.",
+   "text": "Bürgüt asmanda aýlanyp uçýar.",
    "language": "tk",
    "category": "nature",
    "package_id": "package_003",
@@ -1012,7 +1012,7 @@
   },
   {
    "id": "sentence_000108",
-   "text": "Bahar ýagşyndan soň howa arassalanýar.",
+   "text": "Bahar ýagyşyndan soň howa arassalanýar.",
    "language": "tk",
    "category": "nature",
    "package_id": "package_003",
@@ -1075,7 +1075,7 @@
   },
   {
    "id": "sentence_000115",
-   "text": "Iş tapgyrynda möhüm duşuşyk geçirildi.",
+   "text": "Iş wagtynda möhüm duşuşyk geçirildi.",
    "language": "tk",
    "category": "education",
    "package_id": "package_004",
@@ -1138,7 +1138,7 @@
   },
   {
    "id": "sentence_000122",
-   "text": "Inžener täze köpriniň dizaýnyny taýýarlady.",
+   "text": "Inžener täze köpriniň taslamasyny taýýarlady.",
    "language": "tk",
    "category": "education",
    "package_id": "package_004",
@@ -1147,7 +1147,7 @@
   },
   {
    "id": "sentence_000123",
-   "text": "Lukmanlar hassananyň işini gowulandyrýarlar.",
+   "text": "Lukmanlar hassalary bejerýärler.",
    "language": "tk",
    "category": "education",
    "package_id": "package_004",
@@ -1183,7 +1183,7 @@
   },
   {
    "id": "sentence_000127",
-   "text": "Internet baglanyşygy örän wagtlaýyn.",
+   "text": "Internet baglanyşygy örän haýal.",
    "language": "tk",
    "category": "education",
    "package_id": "package_004",
@@ -1228,7 +1228,7 @@
   },
   {
    "id": "sentence_000132",
-   "text": "Ses ýazgy etmek üçin mikrofony ulanýarys.",
+   "text": "Ses ýazga almak üçin mikrofony ulanýarys.",
    "language": "tk",
    "category": "education",
    "package_id": "package_004",
@@ -1255,7 +1255,7 @@
   },
   {
    "id": "sentence_000135",
-   "text": "Elektrik togy bäş minut ýok boldy.",
+   "text": "Elektrik toky bäş minut ýok boldy.",
    "language": "tk",
    "category": "education",
    "package_id": "package_004",
@@ -1273,7 +1273,7 @@
   },
   {
    "id": "sentence_000137",
-   "text": "Paroly hiç kime aýtmazlyk gerek.",
+   "text": "Paroly hiç kime aýtmaly däl.",
    "language": "tk",
    "category": "education",
    "package_id": "package_004",
@@ -1300,7 +1300,7 @@
   },
   {
    "id": "sentence_000140",
-   "text": "Biz faýllary bulutly ammarda saklaýarys.",
+   "text": "Biz faýllary bulut ammarynda saklaýarys.",
    "language": "tk",
    "category": "education",
    "package_id": "package_004",
@@ -1363,7 +1363,7 @@
   },
   {
    "id": "sentence_000147",
-   "text": "Bu gün howa nähili bolýar?",
+   "text": "Bu gün howa nähili?",
    "language": "tk",
    "category": "questions",
    "package_id": "package_005",
@@ -1525,7 +1525,7 @@
   },
   {
    "id": "sentence_000165",
-   "text": "Galaýy bu ýerde arzanmy?",
+   "text": "Galla bu ýerde arzanmy?",
    "language": "tk",
    "category": "questions",
    "package_id": "package_005",
@@ -1606,7 +1606,7 @@
   },
   {
    "id": "sentence_000174",
-   "text": "Bize náhili maslahat berersiňiz?",
+   "text": "Bize nähili maslahat berersiňiz?",
    "language": "tk",
    "category": "questions",
    "package_id": "package_005",
@@ -1669,7 +1669,7 @@
   },
   {
    "id": "sentence_000181",
-   "text": "Aşgabat şäheriň köçeleri giň we arassa.",
+   "text": "Aşgabadyň köçeleri giň we arassa.",
    "language": "tk",
    "category": "culture",
    "package_id": "package_006",
@@ -1714,7 +1714,7 @@
   },
   {
    "id": "sentence_000186",
-   "text": "Hazar deňzi Türkmenistanyň günbatar serhedinde.",
+   "text": "Hazar deňzi Türkmenistanyň günbatar serhedinde ýerleşýär.",
    "language": "tk",
    "category": "culture",
    "package_id": "package_006",
@@ -1732,7 +1732,7 @@
   },
   {
    "id": "sentence_000188",
-   "text": "Merviň harabalyklary dünýä mirasyna girýär.",
+   "text": "Merwiň harabalyklary dünýä mirasyna girýär.",
    "language": "tk",
    "category": "culture",
    "package_id": "package_006",
@@ -1840,7 +1840,7 @@
   },
   {
    "id": "sentence_000200",
-   "text": "Atçylyk sporty ýurdumyzda ösen.",
+   "text": "Atçylyk sporty ýurdumyzda ösendir.",
    "language": "tk",
    "category": "culture",
    "package_id": "package_006",
@@ -1867,7 +1867,7 @@
   },
   {
    "id": "sentence_000203",
-   "text": "Türkmenistanda dört pasyl aýdyň duýulýar.",
+   "text": "Türkmenistanda dört pasyl hem aýdyň duýulýar.",
    "language": "tk",
    "category": "culture",
    "package_id": "package_006",
@@ -1921,7 +1921,7 @@
   },
   {
    "id": "sentence_000209",
-   "text": "Nusay ýazgylary gadymy döwürden habar berýär.",
+   "text": "Nusaý ýazgylary gadymy döwürden habar berýär.",
    "language": "tk",
    "category": "culture",
    "package_id": "package_006",

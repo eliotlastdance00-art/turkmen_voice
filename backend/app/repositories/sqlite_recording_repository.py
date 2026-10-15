@@ -63,6 +63,18 @@ class SqliteRecordingRepository:
             row = db.execute(f"SELECT {_COLUMNS} FROM recordings WHERE id = ?", (recording_id,)).fetchone()
         return self._map(row) if row else None
 
+    def find_by_user_sentence(self, user_id: str, sentence_id: str) -> Recording | None:
+        """Bir ulanyjynyň şu sözlem üçin iň soňky ýazgysy."""
+        if not user_id or not sentence_id:
+            return None
+        with connection() as db:
+            row = db.execute(
+                f"SELECT {_COLUMNS} FROM recordings WHERE user_id = ? AND sentence_id = ?"
+                " ORDER BY created_at DESC LIMIT 1",
+                (user_id, sentence_id),
+            ).fetchone()
+        return self._map(row) if row else None
+
     def list(
         self,
         status: RecordingStatus | None = None,

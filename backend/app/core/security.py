@@ -15,12 +15,29 @@ is not configured the service runs in an *open dev mode* and logs a warning
 from __future__ import annotations
 
 import logging
+import secrets
 
 from fastapi import Header, HTTPException, status
 
 from app.core.config import settings
 
 log = logging.getLogger("turkmen_ses.security")
+
+
+def new_token() -> str:
+    """Create an account token that is *stored* in the database.
+
+    The first MVP derived the token from the user id (``tk_<user_id>``), which
+    meant the token was guessable and could never be rotated.  New accounts get
+    a random token that is persisted in ``users.token``.
+    """
+    return f"tk_{secrets.token_urlsafe(24)}"
+
+
+def legacy_user_id(token: str) -> str:
+    """``tk_<user_id>`` (old APK) → ``<user_id>``; other tokens pass through."""
+    raw = (token or "").strip()
+    return raw[3:] if raw.startswith("tk_") else raw
 
 
 def admin_guard(

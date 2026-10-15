@@ -9,22 +9,52 @@ import 'package:turkmen_ses/core/network/api_exception.dart';
 /// Only the endpoints the app really uses are implemented, and every parsing
 /// path tolerates missing keys (an old server must never crash the app).
 class ApiClient implements ApiClientLike {
-  ApiClient({Dio? dio, String? baseUrl})
+  ApiClient({Dio? dio, String? baseUrl, int maxAttempts = 3})
       : _dio = dio ??
             Dio(
               BaseOptions(
                 baseUrl: baseUrl ?? AppConfig.apiBaseUrl,
-                connectTimeout: const Duration(seconds: 12),
+                connectTimeout: const Duration(seconds: 15),
                 receiveTimeout: const Duration(seconds: 30),
                 sendTimeout: const Duration(seconds: 60),
                 headers: <String, String>{'Accept': 'application/json'},
               ),
-            );
+            ) {
+    _dio.interceptors.add(_RetryInterceptor(_dio, maxAttempts: maxAttempts));
+  }
 
   final Dio _dio;
 
   String? token;
   String? deviceId;
+
+  /// Serwer adresi (sazlamalardan üýtgedilip bilner).
+  String get baseUrl => _dio.options.baseUrl;
+
+  set baseUrl(String value) {
+    final clean = value.trim();
+    if (clean.isNotEmpty) {
+      _dio.options.baseUrl = clean.endsWith('/') ? clean.substring(0, clean.length - 1) : clean;
+    }
+  }
+
+  /// Ýeňil barlag: serwer janlymy? (`/health` — awtorizasiýa gerek däl)
+  Future<bool> ping({Duration timeout = const Duration(seconds: 6)}) async {
+    try {
+      await _dio.get<Object?>(
+        '/health',
+        options: Options(
+          headers: null,
+          receiveTimeout: timeout,
+          sendTimeout: timeout,
+          extra: <String, dynamic>{noRetryKey: true},
+        ),
+      );
+      return true;
+    } on DioException {
+      return false;
+    }
+  }
 
   Map<String, String> get _authHeaders => <String, String>{
         if (token != null && token!.isNotEmpty) 'Authorization': 'Bearer $token',
@@ -223,3 +253,65 @@ class ApiClient implements ApiClientLike {
     return <String, dynamic>{};
   }
 }
+
+/// Tor bökdençliklerinde soragy özi gaýtalap görýär (eksponensial yza süşme).
+///
+/// Mobil internetde bir gezeklik "connection reset" meseleleri adaty zat —
+/// şeýle ýagdaýda ulanyja derrew "serwer elýeterli däl" görkezmegiň deregine,
+/// 3 synanyşyk edilýär. Faýl ýüklemek (multipart) soraglary gaýtalanmaýar:
+/// olar nobat arkaly (sync) eýýäm täzeden iberilýär.
+class _RetryInterceptor extends Interceptor {
+  _RetryInterceptor(this._dio, {this.maxAttempts = 3});
+
+  final Dio _dio;
+  final int maxAttempts;
+
+  @override
+  Future<void> onError(DioException err, ErrorInterceptorHandler handler) async {
+    final request = err.requestOptions;
+    final attempt = (request.extra[retryAttemptKey] as int?) ?? 0;
+    if (!_shouldRetry(err) || attempt + 1 >= maxAttempts) {
+      return handler.next(err);
+    }
+
+    request.extra[retryAttemptKey] = attempt + 1;
+    await Future<void>.delayed(Duration(milliseconds: 350 * (1 << attempt)));
+    try {
+      final response = await _dio.fetch<Object?>(request);
+      return handler.resolve(response);
+    } on DioException catch (error) {
+      return handler.next(error);
+    }
+  }
+
+  bool _shouldRetry(DioException error) {
+    // `extra: {noRetryKey: true}` — ýeňil barlag / saglyk soragy üçin
+    if (error.requestOptions.extra[noRetryKey] == true) {
+      return false;
+    }
+    // Multipart/FormData bir gezek okalýar → ony täzeden iberip bolmaýar.
+    if (error.requestOptions.data is FormData) {
+      return false;
+    }
+    switch (error.type) {
+      case DioExceptionType.connectionTimeout:
+      case DioExceptionType.sendTimeout:
+      case DioExceptionType.receiveTimeout:
+      case DioExceptionType.connectionError:
+      case DioExceptionType.unknown:
+        return true;
+      case DioExceptionType.badResponse:
+        final status = error.response?.statusCode ?? 0;
+        return status == 408 || status == 429 || status >= 500;
+      case DioExceptionType.cancel:
+      case DioExceptionType.badCertificate:
+      case DioExceptionType.transformTimeout:
+        return false;
+    }
+  }
+
+  static const String retryAttemptKey = 'retry_attempt';
+}
+
+/// Şu soragy hiç gaýtalamazlyk üçin `Options.extra`-da ulanylýan açar.
+const String noRetryKey = 'no_retry';

@@ -9,6 +9,7 @@ from datetime import datetime, timedelta, timezone
 
 from fastapi import HTTPException
 
+from app.core.security import legacy_user_id, new_token
 from app.domain.entities.recording import User, level_for_points
 from app.repositories.sqlite_recording_repository import SqliteRecordingRepository
 from app.repositories.sqlite_user_repository import SqliteUserRepository
@@ -59,19 +60,34 @@ class UserService:
             display_name=name,
             avatar_seed=avatar_seed if avatar_seed is not None else random.randint(0, 9999),
             consent_type=consent_type,
+            token=new_token(),
         )
         return user, self.token_for(user)
 
-    @staticmethod
-    def token_for(user: User) -> str:
-        """Opaque, reversible-free token: the mobile app sends it as bearer."""
-        return f"tk_{user.id}"
+    def token_for(self, user: User) -> str:
+        """Return the account token, creating and storing it when missing.
+
+        The token is persisted in ``users.token`` so a redeployed server (or a
+        second instance) can resolve the same account again.  Accounts created
+        by the first MVP have no token yet — they get one lazily here.
+        """
+        if user.token:
+            return user.token
+        candidate = new_token()
+        updated = self.users.set_token(user.id, candidate)
+        if updated is not None:
+            return updated.token or candidate
+        return candidate
 
     def resolve_token(self, token: str | None) -> User | None:
         if not token:
             return None
-        raw = token[3:] if token.startswith("tk_") else token
-        return self.users.get(raw)
+        cleaned = token.strip()
+        user = self.users.get_by_token(cleaned)
+        if user is not None:
+            return user
+        # backwards compatibility: the first APK sent ``tk_<user_id>``
+        return self.users.get(legacy_user_id(cleaned))
 
     def profile(self, user: User) -> dict:
         recordings = self.recordings.list(user_id=user.id, limit=1000)
