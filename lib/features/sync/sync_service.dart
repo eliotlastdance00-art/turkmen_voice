@@ -22,6 +22,7 @@ class SyncProgress {
     this.uploaded = 0,
     this.failed = 0,
     this.ratings = 0,
+    this.duplicates = 0,
     this.lastMessage,
     this.lastError,
   });
@@ -32,6 +33,9 @@ class SyncProgress {
   final int uploaded;
   final int failed;
   final int ratings;
+
+  /// Serwer "bu sözlem eýýäm ýazylan" diýen ýazgylar (gaýtadan iberilmeýär).
+  final int duplicates;
   final String? lastMessage;
   final String? lastError;
 
@@ -44,6 +48,7 @@ class SyncProgress {
     int? uploaded,
     int? failed,
     int? ratings,
+    int? duplicates,
     String? lastMessage,
     String? lastError,
   }) {
@@ -54,6 +59,7 @@ class SyncProgress {
       uploaded: uploaded ?? this.uploaded,
       failed: failed ?? this.failed,
       ratings: ratings ?? this.ratings,
+      duplicates: duplicates ?? this.duplicates,
       lastMessage: lastMessage ?? this.lastMessage,
       lastError: lastError ?? this.lastError,
     );
@@ -107,7 +113,12 @@ class SyncService {
         await database.markUploaded(item.id);
         progress = progress.copyWith(done: progress.done + 1, uploaded: progress.uploaded + 1);
       } on ApiException catch (error) {
-        if (error.statusCode == 401 && onSessionExpired != null) {
+        if (error.statusCode == 409) {
+          // Bu sözlem eýýäm ýazylan — gaýtadan ibermegiň manysy ýok,
+          // nobatdan aýyrýarys (faýl telefonda galýar).
+          await database.updateStatus(item.id, 'duplicate', error: error.message);
+          progress = progress.copyWith(done: progress.done + 1, duplicates: progress.duplicates + 1);
+        } else if (error.statusCode == 401 && onSessionExpired != null) {
           // Token nädogry (serwer täzelenen / başga baza) — hasaby täzeden
           // döredip, ýazgy bir gezek gaýtalanýar.
           await onSessionExpired();
@@ -158,10 +169,11 @@ class SyncService {
       }
     }
 
+    final duplicateNote = progress.duplicates > 0 ? ', ${progress.duplicates} gaýtalanýan' : '';
     progress = progress.copyWith(
       running: false,
       ratings: syncedRatings,
-      lastMessage: '${progress.uploaded} ýazgy, $syncedRatings baha iberildi.',
+      lastMessage: '${progress.uploaded} ýazgy$duplicateNote, $syncedRatings baha iberildi.',
       lastError: progress.failed > 0 ? '${progress.failed} ýazgy şowsuz boldy.' : null,
     );
     onProgress?.call(progress);
@@ -207,6 +219,8 @@ class SyncService {
 
 class SyncController extends Notifier<SyncProgress> {
   StreamSubscription<List<ConnectivityResult>>? _subscription;
+  Timer? _retryTimer;
+  int _failedRounds = 0;
 
   @override
   SyncProgress build() {
@@ -216,6 +230,7 @@ class SyncController extends Notifier<SyncProgress> {
     }
     ref.onDispose(() {
       _subscription?.cancel();
+      _retryTimer?.cancel();
     });
     return const SyncProgress();
   }
@@ -224,8 +239,23 @@ class SyncController extends Notifier<SyncProgress> {
     _subscription?.cancel();
     _subscription = Connectivity().onConnectivityChanged.listen((results) {
       if (!results.contains(ConnectivityResult.none)) {
+        _failedRounds = 0;
         unawaited(run());
       }
+    });
+  }
+
+  /// Serwer wagtlaýyn elýeterli bolmasa, nobaty döwürleýin gaýtalap görýär
+  /// (2 min → 4 min → 8 min → iň köp 15 min). Tor gelende döwür sıfırlanýar.
+  void _scheduleRetry() {
+    if (_failedRounds == 0 || _retryTimer != null) {
+      return;
+    }
+    final step = _failedRounds > 3 ? 3 : _failedRounds - 1;
+    final minutes = 2 * (1 << step);
+    _retryTimer = Timer(Duration(minutes: minutes > 15 ? 15 : minutes), () {
+      _retryTimer = null;
+      unawaited(run());
     });
   }
 
@@ -253,6 +283,13 @@ class SyncController extends Notifier<SyncProgress> {
       ref.invalidate(recordingsProvider);
       ref.invalidate(ratingsProvider);
       unawaited(ref.read(sessionProvider.notifier).refresh());
+    }
+    // Şowsuz synanyşyk bolsa, öz-özünden täzeden synanyşar (tor özi gelmese-de).
+    if (result.failed > 0 || (result.total > 0 && result.uploaded == 0)) {
+      _failedRounds++;
+      _scheduleRetry();
+    } else {
+      _failedRounds = 0;
     }
     return result;
   }

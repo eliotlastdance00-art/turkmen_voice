@@ -456,3 +456,83 @@ def test_reports_can_reject_a_bad_take(client, demo_audio):
         assert response.status_code == 200
     assert response.json()["report_count"] == 3
     assert client.get(f"/api/v1/recordings/{take['id']}").json()["status"] == "rejected"
+
+
+# --------------------------------------------------- bir sözlem bir gezek
+def _upload_sentence(client, headers, audio: bytes, sentence_id: str, text: str = "Men şu gün täze kitap okadym."):
+    return client.post(
+        "/api/v1/recordings",
+        headers=headers,
+        data={
+            "recording_id": f"rec-{uuid.uuid4().hex[:10]}",
+            "sentence_id": sentence_id,
+            "text": text,
+            "language": "tk",
+            "consent_type": "dataset",
+            "duration_ms": 1200,
+        },
+        files={"audio_file": ("take.wav", io.BytesIO(audio), "audio/wav")},
+    )
+
+
+def test_same_sentence_cannot_be_recorded_twice_by_one_user(client, demo_audio):
+    speaker = register(client, "Ýeke gezek")
+    first = _upload_sentence(client, speaker["headers"], demo_audio["wav"], "sentence_000002")
+    assert first.status_code == 201, first.text
+
+    repeat = _upload_sentence(client, speaker["headers"], demo_audio["wav"], "sentence_000002")
+    assert repeat.status_code == 409
+    assert "eýýäm ýazylan" in repeat.json()["detail"]
+
+    # başga sözlem — erkin
+    other = _upload_sentence(
+        client, speaker["headers"], demo_audio["wav"], "sentence_000003", text="Maşgalam bilen agşam nahar iýýäris."
+    )
+    assert other.status_code == 201
+
+    # ýazgyny pozsaň, şol sözlemi täzeden ýazyp bolýar
+    assert client.delete(f"/api/v1/recordings/{first.json()['id']}", headers=speaker["headers"]).status_code == 200
+    again = _upload_sentence(client, speaker["headers"], demo_audio["wav"], "sentence_000002")
+    assert again.status_code == 201, again.text
+
+
+def test_admin_rejection_lets_the_speaker_record_again(client, demo_audio, admin_headers):
+    speaker = register(client, "Ret edilen")
+    take = _upload_sentence(client, speaker["headers"], demo_audio["wav"], "sentence_000004", text="Ejeme bazarda gül satyn alaryn.")
+    assert take.status_code == 201
+    client.post(
+        f"/api/v1/admin/recordings/{take.json()['id']}/review",
+        headers=admin_headers,
+        json={"approved": False, "reason": "Gürlüldi"},
+    )
+    retry = _upload_sentence(client, speaker["headers"], demo_audio["wav"], "sentence_000004", text="Ejeme bazarda gül satyn alaryn.")
+    assert retry.status_code == 201, retry.text
+
+
+def test_custom_sentence_text_is_accepted(client, demo_audio):
+    """Ulanyjynyň özi ýazan teksti (sentence_id = custom_…) kabul edilýär."""
+    speaker = register(client, "Öz sözlemli")
+    custom_id = f"custom_{uuid.uuid4().hex[:10]}"
+    response = _upload_sentence(
+        client,
+        speaker["headers"],
+        demo_audio["wav"],
+        custom_id,
+        text="Men öz sözlemiňizi ýazga alýaryn we serwere iberýärin.",
+    )
+    assert response.status_code == 201, response.text
+    body = response.json()
+    assert body["sentence_id"] == custom_id
+    assert body["text"].startswith("Men öz sözlemiňizi")
+
+
+def test_custom_sentence_rejects_foreign_characters(client, demo_audio):
+    speaker = register(client, "Nädogry tekst")
+    response = _upload_sentence(
+        client,
+        speaker["headers"],
+        demo_audio["wav"],
+        f"custom_{uuid.uuid4().hex[:8]}",
+        text="Привет, мен бул жерде ýazga alýaryn!",
+    )
+    assert response.status_code == 422

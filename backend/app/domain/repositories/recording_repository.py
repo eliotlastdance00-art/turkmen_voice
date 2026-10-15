@@ -8,6 +8,8 @@ class RecordingRepository(Protocol):
 
     def get(self, recording_id: str) -> Recording | None: ...
 
+    def find_by_user_sentence(self, user_id: str, sentence_id: str) -> Recording | None: ...
+
     def list(
         self,
         status: RecordingStatus | None = None,

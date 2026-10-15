@@ -27,6 +27,7 @@ class _RecordingsPageState extends ConsumerState<RecordingsPage> {
     'approved': 'Kabul edilen',
     'rejected': 'Ret edilen',
     'failed': 'Şowsuz',
+    'duplicate': 'Gaýtalanýan',
   };
 
   @override
@@ -41,14 +42,18 @@ class _RecordingsPageState extends ConsumerState<RecordingsPage> {
 
     final seconds = all.fold<int>(0, (sum, row) => sum + row.durationMs) ~/ 1000;
     final approved = all.where((row) => row.status == 'approved').length;
-    final pending = all.where((row) => row.status == 'pending' || row.status == 'failed').length;
+    final pending = all
+        .where((row) => row.status == 'pending' || row.status == 'failed')
+        .length;
+    final duplicates = all.where((row) => row.status == 'duplicate').length;
 
     return CustomScrollView(
       slivers: <Widget>[
         SliverToBoxAdapter(
           child: GradientHeader(
             title: 'Ýazgylarym',
-            subtitle: '${all.length} ýazgy · $seconds sekunt · $approved kabul edilen',
+            subtitle: '${all.length} ýazgy · $seconds sekunt · $approved kabul edilen'
+                '${duplicates > 0 ? ' · $duplicates gaýtalanýan' : ''}',
             trailing: IconButton(
               onPressed: () => ref.read(syncControllerProvider.notifier).run(),
               icon: const Icon(Icons.sync_rounded, color: Colors.white),

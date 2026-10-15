@@ -247,9 +247,9 @@ class RecorderController extends Notifier<RecorderState> {
     if (serverReachable && pushImmediately) {
       await ref.read(syncControllerProvider.notifier).run();
     }
+    // Bir tekst bir gezek ýazylýar: indiki ýazgy üçin tekst boş goýulýar,
+    // şeýlelikde UI täze sözlem alýar we ýazylan sözlem gaýtadan soralmaýar.
     state = RecorderState(
-      sentenceId: state.sentenceId,
-      text: state.text,
       category: state.category,
       packageId: state.packageId,
     );
