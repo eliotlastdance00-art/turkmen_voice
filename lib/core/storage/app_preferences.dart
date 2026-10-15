@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -22,6 +23,8 @@ class AppPreferences {
     this.autoSync = true,
     this.haptics = true,
     this.themeMode = ThemeMode.system,
+    this.serverUrl = '',
+    this.profileSnapshot = const <String, dynamic>{},
   });
 
   final String deviceId;
@@ -35,6 +38,15 @@ class AppPreferences {
   final bool haptics;
   final ThemeMode themeMode;
 
+  /// Islege görä üýtgedilýän serwer adresi (boş bolsa — gurluşykdaky).
+  final String serverUrl;
+
+  /// Iň soňky belli profil (`/users/me`) — programma açylan badyna
+  /// at, ball we dereje görüner ýaly (tora garaşman).
+  final Map<String, dynamic> profileSnapshot;
+
+  bool get hasAccount => token.isNotEmpty;
+
   AppPreferences copyWith({
     String? deviceId,
     bool? onboardingDone,
@@ -46,6 +58,8 @@ class AppPreferences {
     bool? autoSync,
     bool? haptics,
     ThemeMode? themeMode,
+    String? serverUrl,
+    Map<String, dynamic>? profileSnapshot,
   }) {
     return AppPreferences(
       deviceId: deviceId ?? this.deviceId,
@@ -58,6 +72,8 @@ class AppPreferences {
       autoSync: autoSync ?? this.autoSync,
       haptics: haptics ?? this.haptics,
       themeMode: themeMode ?? this.themeMode,
+      serverUrl: serverUrl ?? this.serverUrl,
+      profileSnapshot: profileSnapshot ?? this.profileSnapshot,
     );
   }
 }
@@ -73,6 +89,8 @@ class PreferencesController extends Notifier<AppPreferences> {
   static const String _autoSyncKey = 'auto_sync';
   static const String _hapticsKey = 'haptics';
   static const String _themeKey = 'theme_mode';
+  static const String _serverKey = 'server_url';
+  static const String _profileKey = 'profile_snapshot';
 
   SharedPreferences get _prefs => ref.read(sharedPreferencesProvider);
 
@@ -97,7 +115,43 @@ class PreferencesController extends Notifier<AppPreferences> {
       autoSync: prefs.getBool(_autoSyncKey) ?? true,
       haptics: prefs.getBool(_hapticsKey) ?? true,
       themeMode: _themeFromName(prefs.getString(_themeKey)),
+      serverUrl: prefs.getString(_serverKey) ?? '',
+      profileSnapshot: _readProfile(prefs.getString(_profileKey)),
     );
+  }
+
+  static Map<String, dynamic> _readProfile(String? raw) {
+    if (raw == null || raw.isEmpty) {
+      return const <String, dynamic>{};
+    }
+    try {
+      final decoded = jsonDecode(raw);
+      if (decoded is Map) {
+        return decoded.map((key, value) => MapEntry(key.toString(), value));
+      }
+    } on FormatException {
+      // bozuk snapshot — ähmiýetsiz
+    }
+    return const <String, dynamic>{};
+  }
+
+  Future<void> setServerUrl(String value) async {
+    final clean = value.trim();
+    if (clean.isEmpty) {
+      await _prefs.remove(_serverKey);
+    } else {
+      await _prefs.setString(_serverKey, clean);
+    }
+    state = state.copyWith(serverUrl: clean);
+  }
+
+  /// Profiliň soňky nusgasyny ýatda saklaýar (programma çalt açylsyn diýip).
+  Future<void> saveProfileSnapshot(Map<String, dynamic> profile) async {
+    if (profile.isEmpty) {
+      return;
+    }
+    await _prefs.setString(_profileKey, jsonEncode(profile));
+    state = state.copyWith(profileSnapshot: profile);
   }
 
   Future<void> completeOnboarding({required String displayName, required String consentType}) async {
@@ -128,7 +182,8 @@ class PreferencesController extends Notifier<AppPreferences> {
   Future<void> clearAccount() async {
     await _prefs.remove(_tokenKey);
     await _prefs.remove(_userIdKey);
-    state = state.copyWith(token: '', userId: '');
+    await _prefs.remove(_profileKey);
+    state = state.copyWith(token: '', userId: '', profileSnapshot: const <String, dynamic>{});
   }
 
   Future<void> setDisplayName(String value) async {

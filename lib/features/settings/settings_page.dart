@@ -22,6 +22,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
   Map<String, dynamic>? _serverInfo;
   String? _serverError;
   bool _checking = false;
+  bool _accountBusy = false;
   String? _status;
 
   Future<void> _checkServer() async {
@@ -29,17 +30,105 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
       _checking = true;
       _serverError = null;
     });
+    final api = ref.read(apiClientProvider);
     try {
-      final info = await ref.read(apiClientProvider).readiness();
-      setState(() => _serverInfo = info);
+      // Öň ýeňil `health`, soň doly `ready` — haýsy tapgyrda döwülýändigi görüner.
+      if (!await api.ping()) {
+        throw const ApiException('Serwere baglanyp bolmady (health jogap bermedi).', isNetwork: true);
+      }
+      final info = await api.readiness();
+      if (mounted) {
+        setState(() => _serverInfo = info);
+      }
     } on ApiException catch (error) {
-      setState(() {
-        _serverInfo = null;
-        _serverError = error.message;
-      });
+      if (mounted) {
+        setState(() {
+          _serverInfo = null;
+          _serverError = error.message;
+        });
+      }
     }
     if (mounted) {
       setState(() => _checking = false);
+    }
+  }
+
+  Future<void> _editServerUrl(String current) async {
+    final textController = TextEditingController(text: current);
+    final result = await showDialog<String>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Serwer adresi'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            const Text(
+              'API-niň doly adresi (aýagynda /api/v1 bilen):\n'
+              'meselem: https://myserver.example.com/api/v1',
+              style: TextStyle(fontSize: 12),
+            ),
+            const SizedBox(height: 12),
+            TextField(
+              controller: textController,
+              autofocus: true,
+              keyboardType: TextInputType.url,
+              decoration: const InputDecoration(hintText: 'http://192.168.1.50:8000/api/v1'),
+            ),
+          ],
+        ),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(),
+            child: const Text('Ýatyr'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(dialogContext).pop(textController.text.trim()),
+            child: const Text('Sakla'),
+          ),
+        ],
+      ),
+    );
+    if (result == null) {
+      return;
+    }
+    await ref.read(preferencesProvider.notifier).setServerUrl(result);
+    ref.invalidate(apiClientProvider);
+    _snack(result.isEmpty ? 'Gurluşykdaky serwer adresi dikeldildi.' : 'Serwer adresi täzelendi.');
+    await _checkServer();
+  }
+
+  Future<void> _recreateAccount() async {
+    final session = ref.read(sessionProvider);
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Hasaby täzeden döretmelimi?'),
+        content: const Text(
+          'Telefondaky token pozulýar we serwerde şu enjam üçin täze sessiýa açylýar. '
+          'Telefondaky ýazgylar we ballar ýitirilmez.',
+        ),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(false),
+            child: const Text('Ýatyr'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(dialogContext).pop(true),
+            child: const Text('Döret'),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true || !mounted) {
+      return;
+    }
+    setState(() => _accountBusy = true);
+    final ok = await ref.read(sessionProvider.notifier).refresh(force: true);
+    if (mounted) {
+      setState(() => _accountBusy = false);
+      _snack(ok
+          ? 'Hasap döredildi: ${ref.read(sessionProvider).displayName}'
+          : 'Hasap döredilmedi: ${ref.read(sessionProvider).message ?? session.message ?? 'serwer elýeterli däl'}');
     }
   }
 
@@ -51,6 +140,9 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
     final sentences = ref.watch(localSentencesProvider).valueOrNull ?? const <Sentence>[];
     final sync = ref.watch(syncControllerProvider);
     final scheme = Theme.of(context).colorScheme;
+    final tokenLabel = prefs.token.isEmpty
+        ? 'Token: ýok — hasap döredilmedik'
+        : 'Token: ${prefs.token.substring(0, 6)}… (${prefs.token.length} harp)';
 
     return CustomScrollView(
       slivers: <Widget>[
@@ -200,6 +292,58 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                 ),
               ),
               const SizedBox(height: 22),
+              const SectionTitle('Hasap', subtitle: 'Token we sessiýa ýagdaýy'),
+              SurfaceCard(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Row(
+                      children: <Widget>[
+                        Icon(
+                          prefs.hasAccount ? Icons.verified_user_rounded : Icons.person_off_rounded,
+                          color: prefs.hasAccount ? scheme.primary : AppTheme.danger,
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: Text(
+                            prefs.hasAccount
+                                ? 'Hasap döredildi · ID: ${prefs.userId.isEmpty ? '?' : prefs.userId}'
+                                : 'Hasap ýok — programma açylanda dörediler',
+                            style: Theme.of(context).textTheme.bodyMedium,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      '$tokenLabel\n'
+                      'Token serwer bazasynda saklanýar; programma öçülse-de hasap dikeldilýär.',
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(color: scheme.onSurfaceVariant),
+                    ),
+                    Row(
+                      children: <Widget>[
+                        TextButton.icon(
+                          onPressed: _accountBusy ? null : () => ref.read(sessionProvider.notifier).refresh(),
+                          icon: const Icon(Icons.refresh_rounded, size: 18),
+                          label: const Text('Täzele'),
+                        ),
+                        TextButton.icon(
+                          onPressed: _accountBusy ? null : _recreateAccount,
+                          icon: _accountBusy
+                              ? const SizedBox(
+                                  width: 16,
+                                  height: 16,
+                                  child: CircularProgressIndicator(strokeWidth: 2),
+                                )
+                              : const Icon(Icons.person_add_alt_rounded, size: 18),
+                          label: const Text('Hasaby täzeden döret'),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 22),
               const SectionTitle('Serwer'),
               SurfaceCard(
                 child: Column(
@@ -214,7 +358,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                         const SizedBox(width: 10),
                         Expanded(
                           child: Text(
-                            AppConfig.apiBaseUrl,
+                            prefs.serverUrl.isEmpty ? AppConfig.apiBaseUrl : prefs.serverUrl,
                             style: Theme.of(context).textTheme.bodySmall,
                           ),
                         ),
@@ -223,6 +367,14 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                           child: Text(_checking ? '...' : 'Barla'),
                         ),
                       ],
+                    ),
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: TextButton.icon(
+                        onPressed: () => _editServerUrl(prefs.serverUrl),
+                        icon: const Icon(Icons.edit_rounded, size: 18),
+                        label: const Text('Serwer adresini üýtget'),
+                      ),
                     ),
                     if (_serverInfo != null) ...<Widget>[
                       const SizedBox(height: 10),

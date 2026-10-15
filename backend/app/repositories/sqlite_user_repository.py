@@ -8,7 +8,7 @@ from app.domain.entities.recording import LEVELS, User, level_for_points
 
 _COLUMNS = (
     "id, device_id, display_name, avatar_seed, language, consent_type, points, ratings_given,"
-    " ratings_received, score_sum, approved_count, blocked, created_at, last_seen_at"
+    " ratings_received, score_sum, approved_count, blocked, created_at, last_seen_at, token"
 )
 
 
@@ -23,15 +23,45 @@ class SqliteUserRepository:
             row = db.execute(f"SELECT {_COLUMNS} FROM users WHERE device_id = ?", (device_id,)).fetchone()
         return self._map(row) if row else None
 
-    def create(self, device_id: str, display_name: str, avatar_seed: int, consent_type: str = "dataset") -> User:
+    def get_by_token(self, token: str) -> User | None:
+        """Look the account up by its stored token (the real login path)."""
+        cleaned = (token or "").strip()
+        if not cleaned:
+            return None
+        with connection() as db:
+            row = db.execute(f"SELECT {_COLUMNS} FROM users WHERE token = ?", (cleaned,)).fetchone()
+        return self._map(row) if row else None
+
+    def set_token(self, user_id: str, token: str) -> User | None:
+        with connection() as db:
+            db.execute("UPDATE users SET token = ? WHERE id = ?", (token, user_id))
+        return self.get(user_id)
+
+    def create(
+        self,
+        device_id: str,
+        display_name: str,
+        avatar_seed: int,
+        consent_type: str = "dataset",
+        token: str | None = None,
+    ) -> User:
         now = datetime.now(timezone.utc)
         user_id = f"user_{uuid4().hex[:10]}"
         with connection() as db:
             db.execute(
                 """INSERT INTO users (id, device_id, display_name, avatar_seed, language, consent_type,
-                                      points, created_at, last_seen_at)
-                   VALUES (?, ?, ?, ?, 'tk', ?, 0, ?, ?)""",
-                (user_id, device_id, display_name, avatar_seed, consent_type, now.isoformat(), now.isoformat()),
+                                      points, created_at, last_seen_at, token)
+                   VALUES (?, ?, ?, ?, 'tk', ?, 0, ?, ?, ?)""",
+                (
+                    user_id,
+                    device_id,
+                    display_name,
+                    avatar_seed,
+                    consent_type,
+                    now.isoformat(),
+                    now.isoformat(),
+                    token,
+                ),
             )
         created = self.get(user_id)
         assert created is not None
@@ -225,6 +255,7 @@ class SqliteUserRepository:
             score_sum=row["score_sum"] or 0,
             approved_count=row["approved_count"] or 0,
             blocked=bool(row["blocked"]),
+            token=row["token"] or "",
             created_at=datetime.fromisoformat(row["created_at"]),
             last_seen_at=datetime.fromisoformat(row["last_seen_at"]),
         )

@@ -17,7 +17,7 @@ from app.core.config import settings
 
 log = logging.getLogger("turkmen_ses.db")
 
-SCHEMA_VERSION = 3
+SCHEMA_VERSION = 4
 
 
 SCHEMA = """
@@ -35,7 +35,8 @@ CREATE TABLE IF NOT EXISTS users (
     approved_count INTEGER NOT NULL DEFAULT 0,
     blocked INTEGER NOT NULL DEFAULT 0,
     created_at TEXT NOT NULL,
-    last_seen_at TEXT NOT NULL
+    last_seen_at TEXT NOT NULL,
+    token TEXT
 );
 
 CREATE TABLE IF NOT EXISTS packages (
@@ -123,6 +124,11 @@ CREATE INDEX IF NOT EXISTS idx_ratings_user ON ratings(user_id);
 CREATE INDEX IF NOT EXISTS idx_points_user ON point_events(user_id);
 """
 
+# users columns that were added after the first MVP release (old db file)
+USER_COLUMN_PATCHES: dict[str, str] = {
+    "token": "TEXT",
+}
+
 # columns that were added after the first MVP release (old APK / old db file)
 RECORDING_COLUMN_PATCHES: dict[str, str] = {
     "user_id": "TEXT",
@@ -147,9 +153,30 @@ def init_database() -> None:
     settings.prepare_directories()
     with connection() as db:
         db.executescript(SCHEMA)
+        _patch_legacy_users(db)
         _patch_legacy_recordings(db)
+        _ensure_indexes(db)
         db.execute(f"PRAGMA user_version = {SCHEMA_VERSION}")
     seed_library()
+
+
+def _ensure_indexes(db: sqlite3.Connection) -> None:
+    """Indexes that reference columns added by the legacy patches.
+
+    They must run *after* the patches — an old database does not have
+    ``users.token`` yet when ``SCHEMA`` is executed.
+    """
+    db.execute("CREATE UNIQUE INDEX IF NOT EXISTS idx_users_token ON users(token)")
+    db.execute("CREATE INDEX IF NOT EXISTS idx_users_device ON users(device_id)")
+
+
+def _patch_legacy_users(db: sqlite3.Connection) -> None:
+    """Old databases were created before ``users.token`` existed."""
+    existing = {row[1] for row in db.execute("PRAGMA table_info(users)").fetchall()}
+    for column, definition in USER_COLUMN_PATCHES.items():
+        if column not in existing:
+            log.info("migrating users: adding column %s", column)
+            db.execute(f"ALTER TABLE users ADD COLUMN {column} {definition}")
 
 
 def _patch_legacy_recordings(db: sqlite3.Connection) -> None:

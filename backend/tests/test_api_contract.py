@@ -97,6 +97,74 @@ def test_device_id_header_works_for_old_apks(client):
     assert response.json()["user"]["id"] == user["user"]["id"]
 
 
+def test_account_token_is_stored_in_database(client):
+    """The account (and its token) must live in the database, not in memory."""
+    device_id = f"device-{uuid.uuid4().hex[:12]}"
+    payload = client.post("/api/v1/users/register", json={"device_id": device_id}).json()
+    user_id, token = payload["user"]["id"], payload["token"]
+
+    assert token.startswith("tk_")
+    # a random, stored token — not the guessable tk_<user_id> of the first MVP
+    assert token != f"tk_{user_id}"
+
+    row = _user_row(user_id)
+    assert row is not None, "user was not written to the users table"
+    assert row["device_id"] == device_id
+    assert row["token"] == token
+
+    me = client.get("/api/v1/users/me", headers={"Authorization": f"Bearer {token}"})
+    assert me.status_code == 200
+    assert me.json()["token"] == token
+
+
+def test_token_survives_server_restart(client):
+    """Re-initialising the database (redeploy) must not lose the account."""
+    payload = client.post(
+        "/api/v1/users/register", json={"device_id": f"device-{uuid.uuid4().hex[:12]}"}
+    ).json()
+    token = payload["token"]
+
+    from app.db.sqlite import init_database
+
+    init_database()  # simulates a fresh server process on the same DATA_DIR
+
+    me = client.get("/api/v1/users/me", headers={"Authorization": f"Bearer {token}"})
+    assert me.status_code == 200
+    assert me.json()["user"]["id"] == payload["user"]["id"]
+
+    # …and the app can always ask for the token again with its device id
+    again = client.post(
+        "/api/v1/users/register",
+        json={"device_id": _user_row(payload["user"]["id"])["device_id"]},
+    ).json()
+    assert again["token"] == token
+    assert again["created"] is False
+
+
+def test_legacy_tk_user_id_token_still_works(client):
+    """The first APK stored ``tk_<user_id>`` — old installs keep working."""
+    payload = client.post(
+        "/api/v1/users/register", json={"device_id": f"device-{uuid.uuid4().hex[:12]}"}
+    ).json()
+    legacy = f"tk_{payload['user']['id']}"
+    response = client.get("/api/v1/users/me", headers={"Authorization": f"Bearer {legacy}"})
+    assert response.status_code == 200
+    assert response.json()["user"]["id"] == payload["user"]["id"]
+
+
+def test_unknown_token_is_rejected(client):
+    response = client.get("/api/v1/users/me", headers={"Authorization": "Bearer tk_deadbeef"})
+    assert response.status_code == 401
+
+
+def _user_row(user_id: str) -> dict | None:
+    from app.db.sqlite import connection
+
+    with connection() as db:
+        row = db.execute("SELECT * FROM users WHERE id = ?", (user_id,)).fetchone()
+    return dict(row) if row else None
+
+
 # ------------------------------------------------------------------ upload
 def test_upload_wav_measures_duration_and_stores_hash(client, demo_audio):
     user = register(client, "Ýazyjy A")

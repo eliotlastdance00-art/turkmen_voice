@@ -87,6 +87,7 @@ class User:
     score_sum: int = 0
     approved_count: int = 0
     blocked: bool = False
+    token: str = ""
 
     @property
     def level_name(self) -> str:
