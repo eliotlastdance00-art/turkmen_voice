@@ -10,13 +10,17 @@ turkmen_voice/
   docs/       DEPLOYMENT.md, ARCHITECTURE.md, MASLAHATLAR.md, MVP.md
 ```
 
-## Häzirki ýagdaý (v0.3)
+## Häzirki ýagdaý (v0.4)
 
 | Bölüm | Ýagdaý |
 |---|---|
 | Ses ýazgy (16 kHz mono WAV) | ✅ `AudioEncoder.wav` — Whisper formaty bilen birmeňzeş |
 | Offline işlemek | ✅ drift/SQLite + nobat + awtomatik sinhronizasiýa |
-| Sözlem paketleri | ✅ 6 paket / 215 sözlem (`backend/app/seed/sentences_seed.json`) |
+| Sözlem paketleri | ✅ 6 paket / 215 sözlem + **programmanyň içindäki nusga** (`assets/sentences_seed.json`) — internet bolmasa-da tekst bar |
+| Öz sözlemim | ✅ ulanyjy öz tekstini ýazyp ýazga alýar (elipbiý + uzynlyk barlagy) |
+| Bir sözlem — bir ýazgy | ✅ ýazylan sözlem/tekst gaýtadan soralmaýar (programma + serwer 409) |
+| Hasap / token | ✅ hasap serwer bazasynda (`users.token`), 401-de awtomatik täzeden döretmek |
+| Durnukly birikme | ✅ retry + saglyk barlagy + serwer adresini sazlamalar arkaly üýtgetmek |
 | Serwer tarapy barlag | ✅ WAV barlagy, durasiýa ölçegi, sha256, sessizlik süzgüji |
 | Jemgyýetçilik reýtingi | ✅ ýyldyz + «gabat gelýär/meýär» + 3+ baha → awtomatik tassyklama |
 | Ball / dereje / nyşanlar | ✅ 6 dereje, 8 nyşan, günlük yhlas |
@@ -24,7 +28,8 @@ turkmen_voice/
 | Whisper eksporty | ✅ JSONL / Whisper JSONL / CSV / TSV / ZIP + report.json |
 | Fine-tuning skriptleri | ✅ `build_whisper_dataset.py`, `whisper_finetune.py` |
 | Deploy | ✅ **FastAPI Cloud** (`docs/DEPLOYMENT.md`) + Docker (ätiýaçlyk) |
-| Testler | ✅ 22 backend kontrakt testi (`pytest`) |
+| Testler | ✅ 38 backend testi (kontrakt + tekst hili + seed sinhronlygy) |
+| Çalt açylyş | ✅ brendlenen splash, fonda bootstrap (baza/sözlemler), tor soraglary yza sürülýär |
 
 ## Çalt başlangyç
 
@@ -35,7 +40,7 @@ cd backend
 python -m venv .venv && source .venv/bin/activate
 pip install -r requirements-dev.txt
 
-python -m pytest tests -q                # 22 kontrakt test
+python -m pytest tests -q                # 38 test (kontrakt + tekst hili)
 python scripts/seed_demo.py --takes 40   # demo maglumat (reýting tablisasy üçin)
 
 DATA_DIR=app/data ADMIN_TOKEN=secret uvicorn app.main:app --host 0.0.0.0 --port 8000
@@ -82,10 +87,11 @@ Doly ädimme-ädim, barlag we troubleshooting: **`docs/DEPLOYMENT.md`**.
 |---|---|---|
 | GET | `/api/v1/health`, `/health/ready` | saglyk barlagy (ready: disk ýazylýarmy) |
 | GET | `/api/v1/sentences`, `/sentences/packages`, `/sentences/random` | sözlemler |
-| POST | `/api/v1/recordings` | multipart: `recording_id, sentence_id, text, consent_type, duration_ms, audio_file` (+ islege görä `category, package_id, sample_rate, channels, bit_depth`) |
+| POST | `/api/v1/recordings` | multipart: `recording_id, sentence_id, text, consent_type, duration_ms, audio_file` (+ islege görä `category, package_id, sample_rate, channels, bit_depth`). **409** — bu sözlem eýýäm ýazylan bolsa |
+| POST | `/api/v1/users/register` | anonim hasap; jogap: `{user, token, created}` — hasap we token **bazada saklanýar** |
 | GET | `/api/v1/recordings/{id}`, `/{id}/audio`, `/{id}/ratings` | ýazgy, ses, baha |
 | DELETE | `/api/v1/recordings/{id}` | öz ýazgyňy pozmak (razylygy yzyna almak) |
-| POST | `/api/v1/users/register` | anonim hasap (`device_id` → `tk_<user_id>` token) |
+| POST | `/api/v1/users/register` | anonim hasap (`device_id` → bazada saklanýan `tk_…` token) |
 | GET | `/api/v1/users/me`, `/leaderboard`, `/stats/overview`, `/stats/me` | profil we reýting |
 | GET | `/api/v1/ratings/queue` | başgalaryň barlamaly ýazgylary |
 | POST | `/api/v1/recordings/{id}/ratings`, `/{id}/report` | baha bermek / şikaýat |

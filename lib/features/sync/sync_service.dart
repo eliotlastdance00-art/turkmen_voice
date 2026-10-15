@@ -246,7 +246,7 @@ class SyncController extends Notifier<SyncProgress> {
   }
 
   /// Serwer wagtlaýyn elýeterli bolmasa, nobaty döwürleýin gaýtalap görýär
-  /// (2 min → 4 min → 8 min → iň köp 15 min). Tor gelende döwür sıfırlanýar.
+  /// (2 min → 4 min → 8 min → iň köp 15 min). Tor gelende hasap täzelenýär.
   void _scheduleRetry() {
     if (_failedRounds == 0 || _retryTimer != null) {
       return;

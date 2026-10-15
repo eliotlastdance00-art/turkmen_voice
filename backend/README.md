@@ -9,7 +9,7 @@ saklaýar we jemgyýetçilik reýtingi arkaly hilini barlaýar.
 python -m venv .venv && source .venv/bin/activate
 pip install -r requirements-dev.txt
 
-python -m pytest tests -q                 # 22 kontrakt test
+python -m pytest tests -q                 # 38 test
 python scripts/seed_demo.py --takes 40    # demo gürleýjiler + ýazgylar
 DATA_DIR=app/data ADMIN_TOKEN=secret uvicorn app.main:app --host 0.0.0.0 --port 8000
 ```
@@ -43,7 +43,8 @@ app/
   services/    audio, recording, rating, user, stats, dataset, text
   routers/     health, sentences, recordings, ratings, users, leaderboard, stats, admin
   schemas/     Pydantic API kontraktlary
-  seed/        sentences_seed.json (6 paket / 215 sözlem)
+  seed/        sentences_seed.json (6 paket / 215 sözlem; programma nusgasy:
+               assets/sentences_seed.json ← tools/sync_seed_asset.py)
   static/admin admin panel (bir faýl, token bilen)
   data/        RUNTIME: sqlite + audio (goýulmaýar; DATA_DIR bilen üýtgedilýär)
 scripts/       smoke_test, seed_demo, build_whisper_dataset, whisper_finetune
@@ -60,6 +61,16 @@ tests/         API kontrakt + deploy konfigurasiýa testleri
 | Reýting + awtomatik tassyklama | `services/rating_service.py` |
 | Ball / dereje / nyşan | `services/user_service.py`, `services/points.py` |
 | Whisper eksporty + hil hasabat | `services/dataset_service.py` |
+
+## Hasap we gaýtalamagyň öňüni almak
+
+- `POST /users/register` hasaby we **tötänleýin tokeni** (`users.token`, `tk_` +
+  32 harp) bazada saklaýar; köne APK-laryň `tk_<user_id>` tokeni hem kabul
+  edilýär, `X-Device-Id` bolsa hasaby özi dikeldýär.
+- Bir ulanyjy bir sözlemi (`sentence_id`) diňe bir gezek ýazyp bilýär — ikinji
+  synanyşykda **409** gaýtarýar. Ret edilen (`rejected`) ýazgy päsgel bermeýär,
+  isleýän bolsaňyz öz ýazgyňyzy `DELETE /recordings/{id}` bilen pozup, täzeden
+  ýazyp bilersiňiz.
 
 ## Konfigurasiýa (environment)
 

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Brend reňki: açylyş ekrany ak bolup ýalpyldamasyn (Flutter birinji
+         kadry çyzýança şu reňk görünýär). -->
+    <color name="brand">#0B6E69</color>
+    <color name="brand_dark">#0B1A19</color>
+</resources>
