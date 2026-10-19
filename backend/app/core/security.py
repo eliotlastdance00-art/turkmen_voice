@@ -49,7 +49,9 @@ def admin_guard(
     token = x_admin_token
     if not token and authorization and authorization.lower().startswith("bearer "):
         token = authorization[7:]
-    if token != settings.admin_token:
+    supplied = (token or "").encode("utf-8")
+    expected = settings.admin_token.encode("utf-8")
+    if not secrets.compare_digest(supplied, expected):
         raise HTTPException(status.HTTP_401_UNAUTHORIZED, "Admin token nädogry")
 
 

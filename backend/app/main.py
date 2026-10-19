@@ -56,6 +56,33 @@ app.add_middleware(
     expose_headers=["Content-Disposition"],
 )
 
+
+@app.middleware("http")
+async def security_headers(request, call_next):
+    """Protect the admin UI and its authenticated API responses in browsers."""
+    response = await call_next(request)
+    response.headers.setdefault("X-Content-Type-Options", "nosniff")
+    response.headers.setdefault("Referrer-Policy", "no-referrer")
+
+    path = request.url.path
+    is_admin_response = (
+        path == "/admin"
+        or path.startswith("/admin/")
+        or path.startswith(f"{settings.api_prefix}/admin/")
+    )
+    if is_admin_response:
+        response.headers["Cache-Control"] = "no-store"
+        response.headers["X-Frame-Options"] = "DENY"
+        response.headers["Permissions-Policy"] = "camera=(), microphone=(), geolocation=()"
+        response.headers["Content-Security-Policy"] = (
+            "default-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; "
+            "script-src 'self'; script-src-attr 'none'; style-src 'self'; style-src-attr 'none'; connect-src 'self'; "
+            "img-src 'self' data:; media-src 'self'; font-src 'self'; object-src 'none'; "
+            "manifest-src 'self'"
+        )
+    return response
+
+
 app.include_router(health.router, prefix=settings.api_prefix)
 app.include_router(sentences.router, prefix=settings.api_prefix)
 app.include_router(recordings.router, prefix=settings.api_prefix)

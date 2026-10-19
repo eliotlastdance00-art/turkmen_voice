@@ -425,6 +425,7 @@ def test_admin_review_and_delete(client, admin_headers, demo_audio):
     assert isinstance(row["labels"], list)
     assert row["display_name"] == "Barlag gerek"
     assert row["duration_ms"] >= 400
+    assert "user_id" not in row and "device_id" not in row
 
     top = client.get("/api/v1/admin/recordings", params={"sort": "top", "limit": 5}, headers=admin_headers).json()
     assert len(top["items"]) <= 5
@@ -439,6 +440,12 @@ def test_admin_review_and_delete(client, admin_headers, demo_audio):
 
     overview = client.get("/api/v1/admin/stats", headers=admin_headers).json()
     assert "by_speaker" in overview and "levels" in overview
+    assert [item["score"] for item in overview["rating_distribution"]] == [1, 2, 3, 4, 5]
+    assert sum(item["count"] for item in overview["rating_distribution"]) == overview["ratings_total"]
+    assert all("user_id" not in item for item in overview["top_raters"])
+    assert 0 <= overview["rating_match_percent"] <= 100
+    assert overview["approved_seconds"] <= overview["total_seconds"]
+    assert isinstance(overview["ratings_daily"], list)
 
     assert client.delete(f"/api/v1/admin/recordings/{take['id']}", headers=admin_headers).status_code == 200
 

@@ -245,6 +245,7 @@ class SqliteRecordingRepository:
                 """SELECT
                     COUNT(*) AS total,
                     COALESCE(SUM(duration_ms), 0) AS duration_ms,
+                    COALESCE(SUM(CASE WHEN status = 'approved' THEN duration_ms ELSE 0 END), 0) AS approved_duration_ms,
                     COALESCE(SUM(size_bytes), 0) AS bytes,
                     SUM(CASE WHEN status = 'approved' THEN 1 ELSE 0 END) AS approved,
                     SUM(CASE WHEN status = 'pending' THEN 1 ELSE 0 END) AS pending,

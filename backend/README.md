@@ -9,7 +9,7 @@ saklaýar we jemgyýetçilik reýtingi arkaly hilini barlaýar.
 python -m venv .venv && source .venv/bin/activate
 pip install -r requirements-dev.txt
 
-python -m pytest tests -q                 # 38 test
+python -m pytest tests -q
 python scripts/seed_demo.py --takes 40    # demo gürleýjiler + ýazgylar
 DATA_DIR=app/data ADMIN_TOKEN=secret uvicorn app.main:app --host 0.0.0.0 --port 8000
 ```
@@ -45,7 +45,7 @@ app/
   schemas/     Pydantic API kontraktlary
   seed/        sentences_seed.json (6 paket / 215 sözlem; programma nusgasy:
                assets/sentences_seed.json ← tools/sync_seed_asset.py)
-  static/admin admin panel (bir faýl, token bilen)
+  static/admin moderasiýa UI (CSS/JS aýratyn, CSP goragy, sessiýa tokeni)
   data/        RUNTIME: sqlite + audio (goýulmaýar; DATA_DIR bilen üýtgedilýär)
 scripts/       smoke_test, seed_demo, build_whisper_dataset, whisper_finetune
 tools/         sentences_seed generator
@@ -79,6 +79,11 @@ tests/         API kontrakt + deploy konfigurasiýa testleri
 `MAX_AUDIO_BYTES`, `MIN_RMS_DBFS`, `AUTO_APPROVE_MIN_RATINGS`,
 `AUTO_APPROVE_MIN_SCORE`, `RATINGS_DAILY_LIMIT`.
 Doly sanaw: `.env.example`.
+
+Admin panel `ADMIN_TOKEN`-i diňe `sessionStorage`-da saklaýar (brauzer sessiýasy
+bilen çäkli); HTML üçin berk same-origin CSP ulanylýar, moderasiýa maglumatlary
+cache edilmeýär. Production-da uzyn, tötänleýin `ADMIN_TOKEN` ulanyň we ony
+jemgyýetçilik enjamlarynda saklamaň.
 
 > Production üçin: PostgreSQL, S3/R2, JWT + rollar, rate-limit, backup.
 > Häzirki SQLite + lokal disk MVP we beta synag üçin niýetlenen.
