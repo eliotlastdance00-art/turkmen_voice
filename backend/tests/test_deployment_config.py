@@ -81,8 +81,29 @@ def test_defaults_point_into_the_repo_not_the_cwd(monkeypatch) -> None:
     assert fresh.seed_file.exists(), "sözlem seed faýly bulmaly (birinji işlände göçürilýär)"
 
 
-def test_admin_panel_is_served(client) -> None:
-    assert client.get("/admin/").status_code == 200
+def test_admin_panel_is_served_with_security_headers(client, admin_headers) -> None:
+    panel = client.get("/admin/")
+    assert panel.status_code == 200
+    assert panel.headers["cache-control"] == "no-store"
+    assert panel.headers["x-content-type-options"] == "nosniff"
+    assert panel.headers["x-frame-options"] == "DENY"
+    csp = panel.headers["content-security-policy"]
+    assert "script-src 'self'" in csp
+    assert "script-src-attr 'none'" in csp
+    assert "style-src-attr 'none'" in csp
+    assert "frame-ancestors 'none'" in csp
+
+    # Static assets stay local so the admin can use a strict same-origin CSP.
+    assert client.get("/admin/admin.css").status_code == 200
+    assert client.get("/admin/admin.js").status_code == 200
+    admin_script = (BACKEND_ROOT / "app" / "static" / "admin" / "admin.js").read_text(encoding="utf-8")
+    assert ".innerHTML" not in admin_script and "insertAdjacentHTML" not in admin_script
+    assert "localStorage.getItem" not in admin_script
+
+    admin_api = client.get("/api/v1/admin/stats", headers=admin_headers)
+    assert admin_api.status_code == 200
+    assert admin_api.headers["cache-control"] == "no-store"
+    assert admin_api.headers["content-security-policy"] == csp
 
     root = client.get("/", follow_redirects=False)
     assert root.status_code in (302, 307)

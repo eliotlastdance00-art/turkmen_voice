@@ -80,11 +80,12 @@ def _admin_item(row: dict, min_ratings: int) -> dict:
         "rated_at": row.get("rated_at"),
         "community_score": score,
         "rating_count": row.get("rating_count") or 0,
+        "mismatch_count": row.get("mismatch_count") or 0,
         "verified": bool(row.get("verified")),
         "report_count": row.get("report_count") or 0,
         "duplicate_count": row.get("duplicate_count") or 0,
-        "user_id": row.get("user_id"),
-        "device_id": row.get("device_id"),
+        # Keep device/user identifiers out of the moderator list response; the
+        # display name and recording ID are sufficient for routine review.
         "display_name": row.get("display_name") or "Anonim",
         "speaker_points": row.get("speaker_points") or 0,
         "min_ratings": min_ratings,

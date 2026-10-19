@@ -1,373 +1,232 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="tk">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Türkmen Ses — Admin</title>
-<style>
-  :root{
-    --bg:#0b1020; --panel:#141b33; --panel2:#1b2444; --line:#28325c;
-    --text:#eef2ff; --muted:#9aa7d0; --accent:#38bdf8; --accent2:#22c55e;
-    --warn:#f59e0b; --bad:#ef4444; --radius:14px;
-  }
-  *{box-sizing:border-box}
-  body{margin:0;font:15px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
-       background:linear-gradient(160deg,#070b18,#0f1730 60%,#0b1020);color:var(--text);min-height:100vh}
-  header{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;
-         padding:18px 24px;border-bottom:1px solid var(--line);background:rgba(10,15,32,.75);
-         backdrop-filter:blur(8px);position:sticky;top:0;z-index:10}
-  .brand{display:flex;gap:12px;align-items:center;font-weight:800;font-size:19px;letter-spacing:.2px}
-  .dot{width:11px;height:11px;border-radius:50%;background:var(--accent2);box-shadow:0 0 12px var(--accent2)}
-  .dot.off{background:var(--bad);box-shadow:0 0 12px var(--bad)}
-  .pill{background:var(--panel2);border:1px solid var(--line);padding:6px 12px;border-radius:999px;font-size:13px;color:var(--muted)}
-  main{padding:22px 24px 60px;max-width:1240px;margin:0 auto}
-  .grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(160px,1fr))}
-  .card{background:linear-gradient(180deg,var(--panel),#121935);border:1px solid var(--line);
-        border-radius:var(--radius);padding:16px}
-  .kpi{font-size:30px;font-weight:800;letter-spacing:-.5px}
-  .label{color:var(--muted);font-size:12.5px;text-transform:uppercase;letter-spacing:.8px}
-  .toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:22px 0 12px}
-  input,select,button,textarea{font:inherit;color:var(--text);background:var(--panel2);
-        border:1px solid var(--line);border-radius:10px;padding:9px 12px}
-  button{cursor:pointer;transition:.15s;font-weight:600}
-  button:hover{border-color:var(--accent);transform:translateY(-1px)}
-  button.primary{background:linear-gradient(135deg,#38bdf8,#6366f1);border-color:transparent;color:#08101f}
-  button.ok{background:rgba(34,197,94,.16);border-color:rgba(34,197,94,.45)}
-  button.bad{background:rgba(239,68,68,.14);border-color:rgba(239,68,68,.45)}
-  table{width:100%;border-collapse:collapse;font-size:14px}
-  th,td{padding:11px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
-  th{color:var(--muted);font-size:12.5px;text-transform:uppercase;letter-spacing:.6px}
-  tr:hover td{background:rgba(56,189,248,.05)}
-  .badge{display:inline-block;padding:3px 9px;border-radius:999px;font-size:12px;font-weight:700}
-  .b-approved{background:rgba(34,197,94,.18);color:#4ade80}
-  .b-pending{background:rgba(245,158,11,.18);color:#fbbf24}
-  .b-rejected{background:rgba(239,68,68,.18);color:#f87171}
-  .b-other{background:rgba(148,163,184,.18);color:#cbd5e1}
-  audio{height:34px;max-width:250px}
-  .muted{color:var(--muted)}
-  .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-  .toast{position:fixed;right:20px;bottom:20px;background:var(--panel2);border:1px solid var(--line);
-         padding:12px 16px;border-radius:12px;opacity:0;transform:translateY(10px);transition:.25s;pointer-events:none}
-  .toast.show{opacity:1;transform:none}
-  .login{max-width:420px;margin:60px auto}
-  .bar{height:8px;background:#0e1530;border-radius:999px;overflow:hidden;border:1px solid var(--line)}
-  .bar > i{display:block;height:100%;background:linear-gradient(90deg,#38bdf8,#22c55e)}
-  pre{background:#0c1226;border:1px solid var(--line);border-radius:12px;padding:14px;overflow:auto;max-height:320px}
-</style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Türkmen Ses — Moderasiýa</title>
+  <link rel="stylesheet" href="/admin/admin.css">
+  <script src="/admin/admin.js" defer></script>
 </head>
 <body>
-<header>
-  <div class="brand"><span class="dot off" id="dot"></span> Türkmen Ses · Admin</div>
-  <div class="row">
-    <span class="pill" id="serverInfo">serwer barlanýar…</span>
-    <a class="pill" href="/docs" target="_blank" style="text-decoration:none">Swagger</a>
-    <button id="logout" class="bad" hidden>Çykyş</button>
-  </div>
-</header>
-
-<main>
-  <section id="login" class="login card">
-    <h2 style="margin:6px 0 4px">Giriş</h2>
-    <p class="muted" style="margin-top:0">Admin tokeni giriziň (<code>ADMIN_TOKEN</code>).</p>
-    <div class="row" style="margin-top:12px">
-      <input id="token" type="password" placeholder="X-Admin-Token" style="flex:1" />
-      <button class="primary" id="saveToken">Gir</button>
-    </div>
-  </section>
-
-  <section id="app" hidden>
-    <div class="grid" id="kpis"></div>
-
-    <div class="card" style="margin-top:16px">
-      <div class="row" style="justify-content:space-between">
-        <div><div class="label">Whisper taýýarlyk</div><div id="readyText" class="muted">—</div></div>
-        <div style="min-width:220px"><div class="bar"><i id="readyBar" style="width:0%"></i></div></div>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a class="brand" href="/admin/" aria-label="Türkmen Ses moderasiýa baş sahypa">
+        <span class="brand-mark" aria-hidden="true">TS</span>
+        <span class="brand-copy"><strong>Türkmen Ses</strong><span>Moderasiýa merkezi</span></span>
+      </a>
+      <div class="topbar-actions">
+        <div class="server-status" id="serverStatus" role="status" aria-live="polite">
+          <span class="server-indicator" id="serverIndicator" aria-hidden="true"></span>
+          <span id="serverText">Serwer barlanýar…</span>
+        </div>
+        <button class="button button-quiet" id="logoutButton" type="button" hidden>Çykmak</button>
       </div>
     </div>
+  </header>
 
-    <div class="toolbar">
-      <input id="q" placeholder="Sözlem / ID / gürleýji gözle" style="min-width:240px" />
-      <select id="status">
-        <option value="">Ähli status</option>
-        <option value="pending" selected>Barlag garaşýan</option>
-        <option value="approved">Tassiklanan</option>
-        <option value="rejected">Red edilen</option>
-      </select>
-      <select id="sort">
-        <option value="recent">Iň täze</option>
-        <option value="top">Iň ýokary baha</option>
-        <option value="disputed">Iň köp şikaýat</option>
-        <option value="random">Tötänleýin</option>
-      </select>
-      <button data-size="20" class="page">20</button>
-      <button data-size="50" class="page">50</button>
-      <button data-size="100" class="page">100</button>
-      <button class="primary" id="reload">Täzele</button>
-      <span class="pill" id="count">—</span>
-    </div>
+  <main class="page-shell">
+    <section class="login-screen" id="loginScreen" aria-labelledby="loginTitle">
+      <div class="login-card">
+        <div class="eyebrow">HOWPSUZ ADMIN GIRIŞI</div>
+        <h1 id="loginTitle">Hoş geldiňiz</h1>
+        <p class="muted">Paneli açmak üçin serwer dolandyryjysynyň admin tokenini giriziň.</p>
+        <form id="loginForm" autocomplete="off">
+          <label class="field-label" for="adminToken">Admin tokeni</label>
+          <input id="adminToken" name="admin-token" type="password" autocomplete="off"
+                 autocapitalize="none" spellcheck="false" maxlength="512" required>
+          <button class="button button-primary button-wide" id="loginButton" type="submit">Howpsuz girmek</button>
+          <p class="form-message" id="loginMessage" role="status" aria-live="polite"></p>
+        </form>
+        <p class="security-note">Token diňe şu brauzer sessiýasynda saklanýar. Jemgyýetçilik enjamlarynda çykmagy ýatdan çykarmaň.</p>
+      </div>
+    </section>
 
-    <div class="card" style="padding:8px 10px;overflow:auto">
-      <table>
-        <thead><tr>
-          <th>Ýazgy</th><th>Adam</th><th>Hil</th><th>Gerekli</th><th>Ses</th><th>Hereket</th>
-        </tr></thead>
-        <tbody id="rows"><tr><td colspan="6" class="muted">Ýüklenýär…</td></tr></tbody>
-      </table>
-    </div>
-
-    <div class="toolbar">
-      <button class="primary" id="exportZip">Eksport: ZIP (audio + metadata)</button>
-      <button id="exportJsonl">dataset.jsonl</button>
-      <button id="exportWhisper">whisper.jsonl</button>
-      <button id="exportCsv">metadata.csv</button>
-      <button id="exportTsv">manifest.tsv</button>
-      <button id="exportReport">report.json</button>
-    </div>
-    <pre id="log" hidden></pre>
-  </section>
-</main>
-
-<div class="toast" id="toast"></div>
-
-<script>
-const $ = (id) => document.getElementById(id);
-let token = localStorage.getItem("tk_admin") || "";
-let pageSize = 20;
-let autoTimer = null;
-
-function toast(msg, bad) {
-  const el = $("toast");
-  el.textContent = msg;
-  el.style.borderColor = bad ? "#ef4444" : "#28325c";
-  el.classList.add("show");
-  clearTimeout(el._t);
-  el._t = setTimeout(() => el.classList.remove("show"), 2600);
-}
-
-async function api(path, opts = {}) {
-  const res = await fetch(path, {
-    ...opts,
-    headers: {
-      "X-Admin-Token": token,
-      ...(opts.body && !(opts.body instanceof FormData) ? { "Content-Type": "application/json" } : {}),
-      ...(opts.headers || {}),
-    },
-  });
-  if (res.status === 401) {
-    showLogin();
-    throw new Error("token");
-  }
-  if (!res.ok) {
-    let detail = res.statusText;
-    try { detail = (await res.json()).detail || detail; } catch (_) {}
-    throw new Error(detail);
-  }
-  return res.status === 204 ? null : res.json();
-}
-
-function showLogin() {
-  $("login").hidden = false;
-  $("app").hidden = true;
-  $("logout").hidden = true;
-  localStorage.removeItem("tk_admin");
-  token = "";
-}
-
-function showApp() {
-  $("login").hidden = true;
-  $("app").hidden = false;
-  $("logout").hidden = false;
-  clearInterval(autoTimer);
-  autoTimer = setInterval(() => load(false), 30000);
-}
-
-const statCard = (label, value) => `<div class="card"><div class="label">${label}</div><div class="kpi">${value}</div></div>`;
-
-async function loadHealth() {
-  try {
-    const res = await fetch("/api/v1/health");
-    const data = await res.json();
-    $("dot").className = "dot";
-    $("serverInfo").textContent = `${data.service} v${data.version} · ${data.admin_protected ? "goragly" : "açyk"}`;
-  } catch (e) {
-    $("dot").className = "dot off";
-    $("serverInfo").textContent = "serwer ýok";
-  }
-}
-
-async function loadKpis() {
-  const s = await api("/api/v1/admin/stats");
-  const cards = [
-    statCard("Jemi ýazgy", s.recordings_total),
-    statCard("Ortaça sekunt", s.total_seconds),
-    statCard("Gatnaşyjy", s.contributors),
-    statCard("Saglykly magnit", s.healthy_recordings ?? 0),
-    statCard("Diňlenýänsekunt", s.rater_seconds ?? 0),
-    statCard("Çaklaşan ýazgy", s.consensus_recordings ?? 0),
-  ];
-  if (s.moderators && s.moderators.length) {
-    const top = s.moderators.slice(0, 4)
-      .map((m) => `${m.display_name} (${m.ratings_given})`).join(" · ");
-    cards.push(`<div class="card" style="grid-column:span 2"><div class="label">Iň işjeň moderatory</div><div class="muted" style="font-size:15px">${top}</div></div>`);
-  }
-  cards.push(`<div class="card"><div class="label">Çäklendirme</div>
-     <div class="muted">Günlük ${s.daily_target_seconds ? Math.round(s.daily_target_seconds / 60) + " minut" : "—"} maksat</div></div>`);
-  $("kpis").innerHTML = cards.join("");
-
-  const total = s.recordings_total || 1;
-  const pct = Math.min(100, Math.round(((s.total_seconds || 0) / (s.target_seconds || 1)) * 1000) / 10);
-  $("readyBar").style.width = pct + "%";
-  $("readyText").textContent =
-    `${s.total_seconds}s / ${s.target_seconds}s maksat · ${pct}% · barlagda ${s.pending_recordings ?? 0}`;
-}
-
-function ratingMeter(r) {
-  const score = r.community_score ?? 0;
-  const n = r.rating_count ?? 0;
-  const width = Math.max(6, Math.min(100, (score / 5) * 100));
-  const color = score >= 4 ? "#22c55e" : score >= 3 ? "#f59e0b" : "#ef4444";
-  return `<div style="min-width:120px">
-      <div style="font-weight:700">${n ? score.toFixed(2) : "—"} <span class="muted">(${n})</span></div>
-      <div class="bar" style="margin-top:5px"><i style="width:${n ? width : 0}%;background:${color}"></i></div>
-      ${r.report_count ? `<div class="muted" style="font-size:12px;margin-top:4px">⚠ ${r.report_count} şikaýat</div>` : ""}
-    </div>`;
-}
-
-async function load(showSpinner = true) {
-  try {
-    await loadKpis();
-  } catch (e) {
-    if (e.message === "token") return;
-    toast("Statistika ýüklenmedi: " + e.message, true);
-  }
-  const params = new URLSearchParams({
-    limit: String(pageSize),
-    sort: $("sort").value,
-  });
-  if ($("status").value) params.set("status", $("status").value);
-  if ($("q").value.trim()) params.set("q", $("q").value.trim());
-  try {
-    const data = await api("/api/v1/admin/recordings?" + params);
-    $("count").textContent = `${data.total} hatar · ${data.items.length} görkezilýär`;
-    renderRows(data.items);
-  } catch (e) {
-    if (e.message !== "token") toast("Ýazgylar ýüklenmedi: " + e.message, true);
-    $("rows").innerHTML = `<tr><td colspan="6" class="muted">Ýalňyşlyk: ${e.message}</td></tr>`;
-  }
-}
-
-function cls(status) {
-  return ["approved", "pending", "rejected"].includes(status) ? "b-" + status : "b-other";
-}
-
-function renderRows(items) {
-  if (!items.length) {
-    $("rows").innerHTML = `<tr><td colspan="6" class="muted">Netije ýok — durumy üýtgedip görüň.</td></tr>`;
-    return;
-  }
-  $("rows").innerHTML = items.map((r) => `
-    <tr data-id="${r.id}">
-      <td>
-        <div style="font-weight:600;max-width:340px">${r.text ?? ""}</div>
-        <div class="muted" style="font-size:12.5px">
-          ${r.id} · ${r.duration_ms} ms · ${r.sample_rate ?? 16000} Hz · ${(r.size_bytes / 1024).toFixed(0)} KB
+    <section class="dashboard" id="dashboard" hidden>
+      <div class="page-heading">
+        <div>
+          <div class="eyebrow">MODERATOR PANELI</div>
+          <h1>Gözegçilik paneli</h1>
+          <p class="muted">Ýazgylaryň hilini, baha berişleri we nobaty bir ýerden dolandyryň.</p>
         </div>
-        <div class="muted" style="font-size:12.5px">
-          ${(r.text_normalized && r.text_normalized !== (r.text || "").toLowerCase()) ? "⚠ norm" : "✓ norm"} ·
-          ${r.sha256 ? r.sha256.slice(0, 10) : "hash ýok"} ·
-          ${r.verified ? "✓ tassiklanan" : "barlagda"} ·
-          <span class="badge ${cls(r.status)}">${r.status}</span>
+        <div class="heading-actions">
+          <span class="updated-at" id="updatedAt" role="status" aria-live="polite">Maglumat garaşylýar</span>
+          <button class="button button-primary" id="refreshButton" type="button">Täzele</button>
         </div>
-      </td>
-      <td>${r.display_name ?? "—"}<div class="muted" style="font-size:12.5px">${r.device_id ?? r.user_id ?? ""}</div></td>
-      <td>${ratingMeter(r)}</td>
-      <td>${r.labels?.length ? r.labels.map((l) => `<span class="badge b-other">${l}</span>`).join(" ") : (r.min_ratings ? `<span class="muted">${r.min_ratings - (r.rating_count ?? 0)} baha gerek</span>` : "—")}</td>
-      <td>
-        <audio controls preload="none" src="/api/v1/recordings/${r.id}/audio"></audio>
-        <div class="row" style="margin-top:6px">
-          <button class="ok" data-act="approve">✓ Tassyk</button>
-          <button class="bad" data-act="reject">✕ Ret</button>
-          <button data-act="delete">🗑</button>
+      </div>
+
+      <section class="stat-grid" aria-label="Esasy görkezijiler">
+        <article class="stat-card stat-card-highlight">
+          <span class="stat-label">Barlag garaşýar</span>
+          <strong class="stat-value" id="pendingValue">—</strong>
+          <span class="stat-caption">Moderatoryň hereketine garaşýan ýazgy</span>
+        </article>
+        <article class="stat-card">
+          <span class="stat-label">Tassyklanan ýazgy</span>
+          <strong class="stat-value" id="approvedValue">—</strong>
+          <span class="stat-caption">Dataset-e goşulan ýazgylar</span>
+        </article>
+        <article class="stat-card">
+          <span class="stat-label">Ortaça jemgyýetçilik bahasy</span>
+          <strong class="stat-value" id="averageRatingValue">—</strong>
+          <span class="stat-caption">1–5 ýyldyz boýunça ortaça</span>
+        </article>
+        <article class="stat-card">
+          <span class="stat-label">Jemi baha</span>
+          <strong class="stat-value" id="ratingsValue">—</strong>
+          <span class="stat-caption">Gatnaşyjylaryň beren sesleri</span>
+        </article>
+      </section>
+
+      <section class="overview-grid" aria-label="Hil we işjeňlik seljermesi">
+        <article class="panel rating-panel">
+          <div class="panel-heading">
+            <div>
+              <h2>Baha seljermesi</h2>
+              <p class="muted">Ýazgylara berlen ýyldyzlaryň paýlanyşy</p>
+            </div>
+            <span class="metric-chip" id="ratingTotalChip">— baha</span>
+          </div>
+          <div class="rating-overview">
+            <div class="rating-average-block">
+              <strong id="ratingAverageLarge">—</strong>
+              <span>/ 5</span>
+              <p id="ratingMatchCaption">Tekste gabat geliş: —</p>
+            </div>
+            <div class="rating-distribution" id="ratingDistribution" aria-label="Ýyldyzlar boýunça baha sany"></div>
+          </div>
+        </article>
+
+        <article class="panel signal-panel">
+          <div class="panel-heading">
+            <div>
+              <h2>Hil görkezijileri</h2>
+              <p class="muted">Moderator üçin möhüm duýduryşlar</p>
+            </div>
+          </div>
+          <div class="signal-list">
+            <div class="signal-row"><span>Tekste gabat gelýän baha</span><strong id="matchPercent">—</strong></div>
+            <div class="signal-row"><span>Şikaýatly ýazgy</span><strong id="disputedValue">—</strong></div>
+            <div class="signal-row"><span>3+ baha alan tassyklanan ýazgy</span><strong id="consensusValue">—</strong></div>
+            <div class="signal-row"><span>Ýokary hilli tassykly ýazgy (4+)</span><strong id="healthyValue">—</strong></div>
+          </div>
+          <div class="target-block">
+            <div class="target-caption"><span>Whisper maksatyna ösüş</span><strong id="targetCaption">—</strong></div>
+            <progress id="targetProgress" max="100" value="0" aria-label="Whisper maglumat maksadyna ösüş"></progress>
+          </div>
+        </article>
+
+        <article class="panel activity-panel">
+          <div class="panel-heading">
+            <div>
+              <h2>Soňky 14 günüň işjeňligi</h2>
+              <p class="muted">Günlük ýazgy we baha sany</p>
+            </div>
+            <div class="chart-legend" aria-label="Diagramma düşündirişi">
+              <span><i class="legend-recordings"></i>Ýazgy</span>
+              <span><i class="legend-ratings"></i>Baha</span>
+            </div>
+          </div>
+          <div class="activity-chart" id="activityChart"></div>
+        </article>
+
+        <article class="panel moderators-panel">
+          <div class="panel-heading">
+            <div>
+              <h2>Iň işjeň baha berijiler</h2>
+              <p class="muted">Baha sany we tekste gabat geliş görkezijisi</p>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table class="moderator-table">
+              <thead><tr><th scope="col">Gatnaşyjy</th><th scope="col">Baha</th><th scope="col">Ortaça</th><th scope="col">Gabat däl</th></tr></thead>
+              <tbody id="moderatorRows"></tbody>
+            </table>
+          </div>
+          <p class="empty-note" id="moderatorEmpty" hidden>Entek baha beriş maglumatlary ýok.</p>
+        </article>
+      </section>
+
+      <section class="panel queue-panel" aria-labelledby="queueTitle">
+        <div class="panel-heading queue-heading">
+          <div>
+            <div class="eyebrow">ÝAZGYLARY BARLAMA</div>
+            <h2 id="queueTitle">Moderasiýa nobaty</h2>
+            <p class="muted">Ses diňläň, jemgyýetçilik bahalaryny deňeşdiriň we karary belläň.</p>
+          </div>
+          <span class="queue-count" id="queueCount" role="status" aria-live="polite">Ýüklenýär…</span>
         </div>
-      </td>
-      <td>
-        <div class="muted" style="font-size:12.5px">${r.created_at ? r.created_at.replace("T", " ").slice(0, 16) : ""}</div>
-        <div class="muted" style="font-size:12.5px">${r.rated_at ? "sоňky baha: " + r.rated_at.replace("T", " ").slice(0, 16) : ""}</div>
-      </td>
-    </tr>`).join("");
 
-  $("rows").querySelectorAll("button[data-act]").forEach((btn) => {
-    btn.onclick = async (ev) => {
-      const id = ev.target.closest("tr").dataset.id;
-      const act = btn.dataset.act;
-      if (act === "delete" && !confirm("Ýazgyny pozmaly?")) return;
-      try {
-        if (act === "delete") {
-          await api(`/api/v1/admin/recordings/${id}`, { method: "DELETE" });
-        } else {
-          await api(`/api/v1/admin/recordings/${id}/review`, {
-            method: "POST",
-            body: JSON.stringify({ approved: act === "approve", reason: "admin panel" }),
-          });
-        }
-        toast(act === "approve" ? "Tassyklandy" : act === "reject" ? "Red edildi" : "Pozuldy");
-        load(false);
-      } catch (e) {
-        toast("Ýalňyşlyk: " + e.message, true);
-      }
-    };
-  });
-}
+        <div class="queue-controls">
+          <label class="search-field" for="searchInput">
+            <span>Gözleg</span>
+            <input id="searchInput" type="search" maxlength="120" placeholder="Sözlem, ýazgy ID ýa-da at">
+          </label>
+          <label class="select-field" for="statusFilter">
+            <span>Status</span>
+            <select id="statusFilter">
+              <option value="pending" selected>Barlag garaşýar</option>
+              <option value="">Ähli ýazgylar</option>
+              <option value="approved">Tassyklanan</option>
+              <option value="rejected">Ret edilen</option>
+            </select>
+          </label>
+          <label class="select-field" for="sortFilter">
+            <span>Tertiple</span>
+            <select id="sortFilter">
+              <option value="disputed" selected>Ilki şikaýatly</option>
+              <option value="worst">Pes baha ilki</option>
+              <option value="oldest">Iň köne</option>
+              <option value="recent">Iň täze</option>
+              <option value="top">Ýokary baha ilki</option>
+            </select>
+          </label>
+        </div>
 
-function downloadExports() {
-  const paths = {
-    exportZip: "/api/v1/admin/export.zip",
-    exportWhisper: "/api/v1/admin/export/whisper.jsonl",
-    exportJsonl: "/api/v1/admin/export.jsonl",
-    exportCsv: "/api/v1/admin/export.csv",
-    exportTsv: "/api/v1/admin/export.tsv",
-    exportReport: "/api/v1/admin/export/report.json",
-  };
-  Object.entries(paths).forEach(([id, path]) => {
-    $(id).onclick = () => {
-      fetch(path, { headers: { "X-Admin-Token": token } })
-        .then((res) => res.blob())
-        .then((blob) => {
-          const a = document.createElement("a");
-          a.href = URL.createObjectURL(blob);
-          a.download = path.split("/").pop();
-          a.click();
-          toast("Ýüklendi: " + a.download);
-        })
-        .catch(() => toast("Eksport şowsuz", true));
-    };
-  });
-}
+        <div class="queue-list" id="recordingList" role="region" aria-label="Süzgüçden geçen ýazgylar" aria-busy="false"></div>
+        <div class="queue-footer">
+          <span class="muted" id="pageSummary">—</span>
+          <div class="pagination-controls">
+            <button class="button button-quiet" id="previousPage" type="button" disabled>Öňki</button>
+            <button class="button button-quiet" id="nextPage" type="button" disabled>Indiki</button>
+          </div>
+        </div>
+      </section>
 
-$("saveToken").onclick = () => {
-  token = $("token").value.trim();
-  if (!token) return toast("Token boş", true);
-  localStorage.setItem("tk_admin", token);
-  showApp();
-  load();
-};
-$("logout").onclick = () => { showLogin(); };
-$("reload").onclick = () => load();
-$("status").onchange = () => load();
-$("sort").onchange = () => load();
-$("q").addEventListener("keydown", (e) => { if (e.key === "Enter") load(); });
-document.querySelectorAll("button.page").forEach((b) => {
-  b.onclick = () => {
-    document.querySelectorAll("button.page").forEach((x) => x.classList.remove("primary"));
-    b.classList.add("primary");
-    pageSize = Number(b.dataset.size);
-    load();
-  };
-});
+      <details class="panel export-panel">
+        <summary>
+          <span><strong>Dataset eksporty</strong><small>Dataset-i göçürip alyň ýa-da aýratyn format saýlaň.</small></span>
+          <span class="summary-action">Formatlary görkez</span>
+        </summary>
+        <div class="export-content">
+          <button class="button button-primary" type="button" data-export="zip">Dataset bukjasy (.zip)</button>
+          <button class="button button-secondary" type="button" data-export="whisper">Whisper JSONL</button>
+          <div class="export-extra">
+            <span class="muted">Beýleki formatlar:</span>
+            <button class="button button-link" type="button" data-export="jsonl">JSONL</button>
+            <button class="button button-link" type="button" data-export="csv">CSV</button>
+            <button class="button button-link" type="button" data-export="tsv">TSV</button>
+            <button class="button button-link" type="button" data-export="report">Hil hasabaty</button>
+          </div>
+        </div>
+      </details>
+    </section>
+  </main>
 
-loadHealth();
-downloadExports();
-if (token) { showApp(); load(); } else { showLogin(); }
-</script>
+  <dialog class="review-dialog" id="reviewDialog" aria-labelledby="reviewDialogTitle">
+    <form id="reviewForm">
+      <div class="eyebrow">MODERATOR KARARY</div>
+      <h2 id="reviewDialogTitle">Ýazgyny ret etmek</h2>
+      <p class="muted">Kararyň sebäbini ýazgyda saklamak üçin gysgaça düşündiriş goşuň.</p>
+      <label class="field-label" for="reviewReason">Sebäp</label>
+      <textarea id="reviewReason" maxlength="500" rows="4" placeholder="Mysal: ses düşnüksiz ýa-da tekst gabat gelenok"></textarea>
+      <div class="dialog-actions">
+        <button class="button button-quiet" id="cancelReview" type="button">Yza</button>
+        <button class="button button-danger" id="confirmReview" type="submit">Ret et</button>
+      </div>
+    </form>
+  </dialog>
+
+  <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
 </body>
 </html>

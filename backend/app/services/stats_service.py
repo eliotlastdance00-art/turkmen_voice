@@ -39,6 +39,8 @@ class StatsService:
             "speakers_with_approved": int(stats.get("speakers") or 0),
             "seconds_total": round(total_duration_ms / 1000, 1),
             "hours_total": round(total_duration_ms / 3_600_000, 2),
+            "approved_seconds_total": round(int(stats.get("approved_duration_ms") or 0) / 1000, 1),
+            "approved_hours_total": round(int(stats.get("approved_duration_ms") or 0) / 3_600_000, 2),
             "avg_duration_ms": int(stats.get("avg_duration_ms") or 0),
             "avg_quality": round(stats["avg_community_score"], 2) if stats.get("avg_community_score") else None,
             "ratings_total": self.ratings.total(),
@@ -55,11 +57,13 @@ class StatsService:
         overview = self.overview()
         health = self.recordings.community_health()
         moderators = self.ratings.top_raters(limit=12)
+        rating_analytics = self.ratings.analytics(days=14)
         target_seconds = int(float(overview.get("target_hours") or 10) * 3600)
         overview.update(
             {
                 # the dashboard speaks in the same units as the mobile app
                 "total_seconds": overview["seconds_total"],
+                "approved_seconds": overview["approved_seconds_total"],
                 "target_seconds": target_seconds,
                 "pending_recordings": overview["pending"],
                 "approved_recordings": overview["approved"],
@@ -71,6 +75,12 @@ class StatsService:
                 "daily_target_seconds": 300,
                 "by_speaker": self.recordings.by_speaker()[:20],
                 "top_raters": moderators,
+                "rating_average": rating_analytics["average_score"],
+                "rating_match_percent": rating_analytics["match_percent"],
+                "ratings_match_total": rating_analytics["matches_text"],
+                "ratings_mismatch_total": rating_analytics["mismatches"],
+                "rating_distribution": rating_analytics["distribution"],
+                "ratings_daily": rating_analytics["daily"],
                 "levels": self.users.levels(),
             }
         )

@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
 
 from app.db.sqlite import connection
 from app.domain.entities.recording import Rating
@@ -67,6 +67,49 @@ class SqliteRatingRepository:
         with connection() as db:
             return int(db.execute("SELECT COUNT(*) AS value FROM ratings").fetchone()["value"])
 
+    def analytics(self, days: int = 14) -> dict:
+        """Small, privacy-preserving aggregates for the moderator dashboard."""
+        days = max(1, min(days, 90))
+        since = (datetime.now(timezone.utc).date() - timedelta(days=days - 1)).isoformat()
+        with connection() as db:
+            summary = db.execute(
+                """SELECT COUNT(*) AS total,
+                          AVG(score) AS average_score,
+                          SUM(CASE WHEN matches_text = 1 THEN 1 ELSE 0 END) AS matches_text,
+                          SUM(CASE WHEN matches_text = 0 THEN 1 ELSE 0 END) AS mismatches
+                   FROM ratings"""
+            ).fetchone()
+            distribution_rows = db.execute(
+                "SELECT score, COUNT(*) AS count FROM ratings GROUP BY score"
+            ).fetchall()
+            daily_rows = db.execute(
+                """SELECT substr(created_at, 1, 10) AS day,
+                          COUNT(*) AS ratings,
+                          AVG(score) AS average_score,
+                          SUM(CASE WHEN matches_text = 0 THEN 1 ELSE 0 END) AS mismatches
+                   FROM ratings
+                   WHERE substr(created_at, 1, 10) >= ?
+                   GROUP BY day ORDER BY day ASC""",
+                (since,),
+            ).fetchall()
+
+        total = int(summary["total"] or 0)
+        matches_text = int(summary["matches_text"] or 0)
+        distribution = {int(row["score"]): int(row["count"]) for row in distribution_rows}
+        return {
+            "total": total,
+            "average_score": round(float(summary["average_score"]), 2)
+            if summary["average_score"] is not None
+            else None,
+            "matches_text": matches_text,
+            "mismatches": int(summary["mismatches"] or 0),
+            "match_percent": round(matches_text / total * 100, 1) if total else 0.0,
+            "distribution": [
+                {"score": score, "count": distribution.get(score, 0)} for score in range(1, 6)
+            ],
+            "daily": [dict(row) for row in daily_rows],
+        }
+
     def top_raters(self, limit: int = 20) -> list[dict]:
         with connection() as db:
             rows = db.execute(
@@ -82,6 +125,7 @@ class SqliteRatingRepository:
         out = []
         for row in rows:
             item = dict(row)
+            item.pop("user_id", None)
             item["ratings_given"] = int(item.pop("ratings"))
             item["average_score"] = round(item["average_score"], 2) if item.get("average_score") else None
             out.append(item)
